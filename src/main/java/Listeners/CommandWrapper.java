@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class CommandWrapper implements MessageCreateListener {
@@ -28,8 +29,13 @@ public abstract class CommandWrapper implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
-        if (botInvoked.apply(messageCreateEvent) && messageCreateEvent.getMessageContent().contains(command)) {
-            doAction(messageCreateEvent);
+        try {
+            if (botInvoked.apply(messageCreateEvent) && messageCreateEvent.getMessageContent().contains(command)) {
+                doAction(messageCreateEvent);
+            }
+        }
+        catch (Exception e) {
+            messageCreateEvent.getChannel().sendMessage("Something went wrong. " + e);
         }
     }
 

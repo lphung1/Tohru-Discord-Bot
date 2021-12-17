@@ -1,3 +1,5 @@
+import Listeners.DetailsCommand;
+import Listeners.RebootCommand;
 import Listeners.SetInstanceIdCommand;
 import Listeners.StartServerCommand;
 import Listeners.StopServerCommand;
@@ -19,6 +21,8 @@ public class MainApp {
         api.addMessageCreateListener(new StartServerCommand(api));
         api.addMessageCreateListener(new StopServerCommand(api));
         api.addMessageCreateListener(new SetInstanceIdCommand(api));
+        api.addMessageCreateListener(new RebootCommand(api));
+        api.addMessageCreateListener(new DetailsCommand(api));
 
         log.info("Bot now listening");
     }

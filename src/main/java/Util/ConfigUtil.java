@@ -72,7 +72,6 @@ public class ConfigUtil {
         try (OutputStream outStream = new FileOutputStream(fileName)) {
             prop.store(outStream, "File updated");
         }
-
     }
 
     private static String getPath(String path) {

@@ -14,7 +14,7 @@ public class StartServerCommand extends AwsCommand {
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
         MessageBuilder messageBuilder = new MessageBuilder();
         messageCreateEvent.getChannel().sendMessage("startServer called");
-        if (awsEc2Service.startEc2()) {
+        if (awsLambdaService.startEc2()) {
             messageCreateEvent.getChannel().sendMessage("Request to start successful");
         }
         else {

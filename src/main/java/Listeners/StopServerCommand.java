@@ -15,7 +15,7 @@ public class StopServerCommand extends AwsCommand {
         messageCreateEvent.getChannel().sendMessage("stopServer called");
         MessageBuilder messageBuilder = new MessageBuilder();
 
-        if (awsEc2Service.stopEc2()) {
+        if (awsLambdaService.stopEc2()) {
             messageCreateEvent.getChannel().sendMessage("Request to stop successful");
         }
         else {

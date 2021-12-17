@@ -6,7 +6,7 @@ DOWNLOAD=true
 
 # This will cause the script to run in a loop so that the bot auto-restarts
 # when you use the shutdown command
-LOOP=false
+LOOP=true
 
 download() {
     if [ $DOWNLOAD == true ]; then

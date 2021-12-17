@@ -1,6 +1,7 @@
 package Listeners;
 
-import AwsLambdaService.AwsLambdaService;
+import AwsServices.AwsEc2Service;
+import AwsServices.AwsLambdaService;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.permission.Role;
@@ -11,11 +12,12 @@ import java.util.List;
 
 public abstract class AwsCommand extends CommandWrapper {
 
-    static AwsLambdaService awsEc2Service;
+    static AwsLambdaService awsLambdaService;
+    static AwsEc2Service awsEc2Service;
     static Role awsRole;
     static {
-        awsEc2Service = new AwsLambdaService();
-
+        awsLambdaService = new AwsLambdaService();
+        awsEc2Service = new AwsEc2Service();
     }
 
     AwsCommand(DiscordApi api, String command) {

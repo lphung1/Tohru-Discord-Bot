@@ -1,4 +1,4 @@
-package AwsLambdaService;
+package AwsServices;
 
 import Util.ConfigUtil;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
