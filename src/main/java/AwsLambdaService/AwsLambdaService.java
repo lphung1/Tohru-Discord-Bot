@@ -2,46 +2,45 @@ package AwsLambdaService;
 
 import Util.ConfigUtil;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
 
+import java.util.logging.Logger;
+
 public final class AwsLambdaService {
 
-    BasicAWSCredentials credentials;
-
+    static Logger log = Logger.getLogger(AwsLambdaService.class.getName());
     AWSLambdaClientBuilder awsLambdaClientBuilder;
 
     AWSLambda client;
 
     public AwsLambdaService() {
-        System.out.println("Aws Service initializing");
-        credentials = new BasicAWSCredentials(ConfigUtil.getAwsAccessKey(),ConfigUtil.getAwsSecretKey());
+        log.info("Aws Lambda Service initializing");
         awsLambdaClientBuilder = AWSLambdaClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withCredentials(new AWSStaticCredentialsProvider(ConfigUtil.getBasicAwsCredentials()))
                 .withRegion(ConfigUtil.getAwsRegion());
 
         client = awsLambdaClientBuilder.build();
-        System.out.println("Initializing done");
+        log.info("Initializing done");
     }
 
     public boolean startEc2() {
-        System.out.println("Invoking start lambda function");
+        log.info("Invoking start lambda function");
         InvokeRequest req = new InvokeRequest()
                 .withFunctionName(ConfigUtil.getStartLambdaName());
         InvokeResult response = client.invoke(req);
-        System.out.println("Request complete");
+        log.info("Request complete");
         return (response.getStatusCode().equals(200));
     }
 
     public boolean stopEc2() {
-        System.out.println("Invoking stop lambda function");
+        log.info("Invoking stop lambda function");
         InvokeRequest req = new InvokeRequest()
                 .withFunctionName(ConfigUtil.getStopLambdaName());
         InvokeResult response = client.invoke(req);
-        System.out.println("Request complete");
+        log.info("Request complete");
         return (response.getStatusCode().equals(200));
     }
 

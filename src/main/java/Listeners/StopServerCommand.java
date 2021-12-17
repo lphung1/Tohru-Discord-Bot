@@ -4,14 +4,14 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 
-public class StopServerCommand extends CommandWrapper {
+public class StopServerCommand extends AwsCommand {
 
     public StopServerCommand(DiscordApi api) {
         super(api, "stopServer");
     }
 
     @Override
-    public void doAction(MessageCreateEvent messageCreateEvent) {
+    public void doAwsAction(MessageCreateEvent messageCreateEvent) {
         messageCreateEvent.getChannel().sendMessage("stopServer called");
         MessageBuilder messageBuilder = new MessageBuilder();
 

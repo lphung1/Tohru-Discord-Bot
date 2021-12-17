@@ -1,5 +1,4 @@
 package Listeners;
-import AwsLambdaService.AwsLambdaService;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -13,18 +12,11 @@ public abstract class CommandWrapper implements MessageCreateListener {
     static String prefix;
     String command;
 
-    AwsLambdaService awsEc2Service;
-
-    CommandWrapper() {
-        throw new IllegalStateException("include super(DiscordApi, String) constructor for - " + this.getClass());
-    }
-
     public CommandWrapper(DiscordApi api, String command) {
         this.api = api;
         this.command = command;
         String prefixConfig = ConfigUtil.getPrefix();
         prefix = (prefixConfig == null || prefixConfig.equalsIgnoreCase("@mention")) ? "" : prefixConfig;
-        awsEc2Service = new AwsLambdaService();
     }
 
     Function<MessageCreateEvent, Boolean> botInvoked = (messageCreateEvent -> {

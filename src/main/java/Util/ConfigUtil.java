@@ -1,28 +1,37 @@
 package Util;
 
+import com.amazonaws.auth.BasicAWSCredentials;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConfigUtil {
-
-    static final String fileName = "src/main/resources/bot.config";
     static Properties prop = new Properties();
-
+    static String fileName = getPath("bot.properties");
+    static Logger log = Logger.getLogger(ConfigUtil.class.getName());
     static {
         loadProperties();
-        System.out.println("Properties Loaded");
+        log.info("Properties loaded");
     }
 
     public static Properties loadProperties() {
-        try {
-            FileInputStream fis = new FileInputStream(fileName);
+        log.info("Properties Path " + fileName);
+        try (InputStream fis = new FileInputStream(fileName)) {
             prop.load(fis);
         } catch (FileNotFoundException ex) {
-            System.out.println("File not found, make sure there is a bot.config file in src/main/resources");
+            log.log(Level.SEVERE, "File not found, make sure there is a bot.properties file in src/main/resources");
         } catch (IOException ex) {
-            System.out.println("Issue reading config file.");
+            log.log(Level.SEVERE, "Issue Reading file");
         }
 
         return prop;
@@ -45,6 +54,35 @@ public class ConfigUtil {
     public static String getStartLambdaName() { return prop.getProperty("aws.startLambdaName"); }
 
     public static String getStopLambdaName() { return prop.getProperty("aws.stopLambdaName"); }
+
+    public static String getEC2InstanceId() { return prop.getProperty("aws.ec2InstanceId"); }
+
+    public static String getAwsDiscordRole() { return prop.getProperty("discord.awsRole"); }
+
+    public static BasicAWSCredentials getBasicAwsCredentials() {
+        return new BasicAWSCredentials(getAwsAccessKey(),getAwsSecretKey());
+    }
+
+    public static void setEc2InstanceId(String ec2InstanceId) throws IOException {
+        prop.setProperty("aws.ec2InstanceId", ec2InstanceId);
+        updateConfigFile();
+    }
+
+    private static void updateConfigFile() throws IOException {
+        try (OutputStream outStream = new FileOutputStream(fileName)) {
+            prop.store(outStream, "File updated");
+        }
+
+    }
+
+    private static String getPath(String path) {
+        try {
+            return Paths.get(new File(ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath() + File.separator + path).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 }
