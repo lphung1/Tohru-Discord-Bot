@@ -70,4 +70,8 @@ public class MessageUtil {
         return (string == null || string.isEmpty()) ? stringIfNull : string;
     }
 
+    public static String getOrDefault(String string) {
+        return getOrDefault(string, "-");
+    }
+
 }

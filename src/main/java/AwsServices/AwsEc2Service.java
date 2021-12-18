@@ -3,9 +3,12 @@ package AwsServices;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.services.ec2.model.DescribeInstanceTypesRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceTypesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
+import com.amazonaws.services.ec2.model.InstanceTypeInfo;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RebootInstancesResult;
 import com.amazonaws.services.ec2.model.Reservation;
@@ -18,6 +21,7 @@ import org.javacord.api.entity.activity.ActivityType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -67,6 +71,27 @@ public class AwsEc2Service {
         StopInstancesRequest request = new StopInstancesRequest()
                 .withInstanceIds(getEC2InstanceId());
         return CompletableFuture.supplyAsync(() -> ec2.stopInstances(request));
+    }
+
+    public Map<String, InstanceTypeInfo> getInstanceTypeInfo(List<String> instanceType) {
+        DescribeInstanceTypesRequest request = new DescribeInstanceTypesRequest().withInstanceTypes(instanceType);
+        Map<String, InstanceTypeInfo> instanceTypeInfoMap = new HashMap<>();
+        log.info("Getting instance type details");
+        boolean done = false;
+        while(!done) {
+            DescribeInstanceTypesResult response = ec2.describeInstanceTypes(request);
+            response.getInstanceTypes()
+                    .stream()
+                    .forEach(instanceTypeInfo -> {
+                instanceTypeInfoMap.putIfAbsent(instanceTypeInfo.getInstanceType(),instanceTypeInfo);
+            });
+            request.setNextToken(response.getNextToken());
+            if(response.getNextToken() == null) {
+                done = true;
+            }
+        }
+
+        return instanceTypeInfoMap;
     }
 
     public Map<String, Instance> getEC2DetailsMap() {
