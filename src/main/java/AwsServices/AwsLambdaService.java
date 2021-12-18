@@ -18,7 +18,7 @@ public final class AwsLambdaService {
 
     private static AwsLambdaService service;
 
-    public AwsLambdaService() {
+    private AwsLambdaService() {
         log.info("Aws Lambda Service initializing");
         awsLambdaClientBuilder = AWSLambdaClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(ConfigUtil.getBasicAwsCredentials()))

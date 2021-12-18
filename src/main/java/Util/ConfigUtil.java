@@ -74,6 +74,17 @@ public class ConfigUtil {
         }
     }
 
+    public static boolean setAwsRoleId(String roleId) {
+        try {
+            prop.setProperty("discord.awsRole", roleId);
+            updateConfigFile();
+            return true;
+        } catch (IOException e) {
+            log.info("Issue with writing to file.");
+            return false;
+        }
+    }
+
     private static void updateConfigFile() throws IOException {
         try (OutputStream outStream = new FileOutputStream(fileName)) {
             prop.store(outStream, "File updated");

@@ -7,11 +7,13 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Util.ConfigUtil.getEC2InstanceId;
+
 public class MessageUtil {
 
     static final Color defaultColor = Color.DARK_GRAY;
 
-    static final Map<Integer, Color> statusToColorMap = new HashMap() {{
+    public static final Map<Integer, Color> statusToColorMap = new HashMap() {{
         /**
          * 0 : pending
          * 16 : running
@@ -25,6 +27,12 @@ public class MessageUtil {
         put(80, Color.RED);
         put(64, new Color(245, 129, 29));
         put(0, Color.yellow);
+    }};
+
+    public static final Map<Integer, Color> statusCodeColorMap = new HashMap() {{
+        // TODO Add more colors based on http response
+        put(200, Color.GREEN);
+
     }};
 
     public static Color stateColorHandler(Integer state) {
@@ -52,6 +60,14 @@ public class MessageUtil {
                 new EmbedBuilder().setTitle(message)
                         .setColor(color)
         );
+    }
+
+    public static MessageBuilder getInvalidInstanceMessage() {
+        return getSimpleEmbedMessage(String.format("[%s] is not a valid instance ID, please set a valid id", getEC2InstanceId()), Color.RED );
+    }
+
+    public static String getOrDefault(String string, String stringIfNull) {
+        return (string == null || string.isEmpty()) ? stringIfNull : string;
     }
 
 }

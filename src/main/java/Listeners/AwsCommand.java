@@ -10,7 +10,10 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
+import java.awt.*;
 import java.util.List;
+
+import static Util.MessageUtil.*;
 
 public abstract class AwsCommand extends CommandWrapper {
 
@@ -29,13 +32,12 @@ public abstract class AwsCommand extends CommandWrapper {
     public void doAction(MessageCreateEvent messageCreateEvent) {
         User thisUser = messageCreateEvent.getMessage().getUserAuthor().get();
         List<Role> userRoles = thisUser.getRoles(messageCreateEvent.getServer().get());
-        if (awsRole == null || userRoles.contains(awsRole)) {
+        if (userRoles.contains(awsRole) || messageCreateEvent.getMessageAuthor().isBotOwner()) {
             doAwsAction(messageCreateEvent);
             awsEc2Service.updateBotStatus(api);
         }
         else {
-            new MessageBuilder()
-                    .append("You do not have permissions to execute that command.", MessageDecoration.BOLD)
+            getSimpleEmbedMessage("You do not have permissions to use that command", Color.RED)
                     .send(messageCreateEvent.getChannel());
         }
     }

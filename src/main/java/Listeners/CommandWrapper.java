@@ -66,11 +66,11 @@ public abstract class CommandWrapper implements MessageCreateListener {
 
     public abstract void doAction(MessageCreateEvent messageCreateEvent);
 
-    public String getCommand() {
+    public String getCommandName() {
         return command;
     }
 
-    public String getDescription() {
+    public String getCommandDescription() {
         return description;
     }
 

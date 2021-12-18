@@ -9,6 +9,10 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RebootInstancesResult;
 import com.amazonaws.services.ec2.model.Reservation;
+import com.amazonaws.services.ec2.model.StartInstancesRequest;
+import com.amazonaws.services.ec2.model.StartInstancesResult;
+import com.amazonaws.services.ec2.model.StopInstancesRequest;
+import com.amazonaws.services.ec2.model.StopInstancesResult;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.activity.ActivityType;
 
@@ -32,10 +36,12 @@ public class AwsEc2Service {
     private static final Logger log = Logger.getLogger(AwsEc2Service.class.getCanonicalName());
 
     private AwsEc2Service() {
+        log.info("Ec2 Service initializing");
         ec2 = AmazonEC2ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(getBasicAwsCredentials()))
                 .withRegion(getAwsRegion())
                 .build();
+        log.info("Initializing Complete");
     }
 
     public CompletableFuture<RebootInstancesResult> restartEC2Instance() {
@@ -45,6 +51,22 @@ public class AwsEc2Service {
         RebootInstancesRequest request = new RebootInstancesRequest().withInstanceIds(instanceId);
 
         return CompletableFuture.supplyAsync( () -> ec2.rebootInstances(request));
+    }
+
+    public CompletableFuture<StartInstancesResult> startEc2Instance() {
+        String instanceId = getEC2InstanceId();
+        log.info("Starting ec2 instance with ID: " + instanceId);
+        StartInstancesRequest request = new StartInstancesRequest()
+                .withInstanceIds(getEC2InstanceId());
+        return CompletableFuture.supplyAsync(() -> ec2.startInstances(request));
+    }
+
+    public CompletableFuture<StopInstancesResult> stopEc2Instance() {
+        String instanceId = getEC2InstanceId();
+        log.info("Stopping ec2 instance with ID: " + instanceId);
+        StopInstancesRequest request = new StopInstancesRequest()
+                .withInstanceIds(getEC2InstanceId());
+        return CompletableFuture.supplyAsync(() -> ec2.stopInstances(request));
     }
 
     public Map<String, Instance> getEC2DetailsMap() {

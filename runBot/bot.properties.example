@@ -1,0 +1,12 @@
+discord.token=
+discord.clientSecret=
+discord.prefix=@mention
+discord.awsRole=
+
+aws.accessKey=
+aws.secretKey=
+aws.region=us-east-1
+
+aws.startLambdaName=
+aws.stopLambdaName=
+aws.ec2InstanceId=
