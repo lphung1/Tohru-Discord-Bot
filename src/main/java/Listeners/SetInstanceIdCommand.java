@@ -2,10 +2,14 @@ package Listeners;
 
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import static Util.MessageUtil.*;
 
 public class SetInstanceIdCommand extends AwsCommand {
 
@@ -17,17 +21,16 @@ public class SetInstanceIdCommand extends AwsCommand {
 
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
-        String [] strArr = messageCreateEvent.getMessageContent().split(" ");
-
+        String[] strArr = messageCreateEvent.getMessageContent().split(" ");
+        TextChannel channel = messageCreateEvent.getChannel();
         if (strArr != null && strArr.length > 2) {
-            try {
-                ConfigUtil.setEc2InstanceId(strArr[2]);
-                messageCreateEvent.getChannel().sendMessage("Set AWS EC2 instanceId to : " + strArr[2]);
-            } catch (IOException e) {
-                messageCreateEvent.getChannel().sendMessage("Issue trying to set instance id");
+            if (ConfigUtil.setEc2InstanceId(strArr[2])) {
+                getSimpleEmbedMessage(String.format("Now tracking instanceId : %s", strArr[2]))
+                        .send(channel);
+            } else {
+                getSimpleEmbedMessage("Issue with setting instance Id.", Color.RED)
+                        .send(channel);
             }
         }
-
-
     }
 }

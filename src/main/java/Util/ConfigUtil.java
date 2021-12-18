@@ -63,9 +63,15 @@ public class ConfigUtil {
         return new BasicAWSCredentials(getAwsAccessKey(),getAwsSecretKey());
     }
 
-    public static void setEc2InstanceId(String ec2InstanceId) throws IOException {
-        prop.setProperty("aws.ec2InstanceId", ec2InstanceId);
-        updateConfigFile();
+    public static boolean setEc2InstanceId(String ec2InstanceId) {
+        try {
+            prop.setProperty("aws.ec2InstanceId", ec2InstanceId);
+            updateConfigFile();
+            return true;
+        } catch (IOException e) {
+            log.info("Issue with writing to file.");
+            return false;
+        }
     }
 
     private static void updateConfigFile() throws IOException {
@@ -76,7 +82,13 @@ public class ConfigUtil {
 
     private static String getPath(String path) {
         try {
-            return Paths.get(new File(ConfigUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath() + File.separator + path).toString();
+            return Paths.get(new File(ConfigUtil.class.getProtectionDomain()
+                                    .getCodeSource()
+                                    .getLocation()
+                                    .toURI())
+                                    .getParentFile()
+                                    .getPath() + File.separator + path)
+                                    .toString();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

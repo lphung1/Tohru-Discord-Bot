@@ -16,6 +16,8 @@ public final class AwsLambdaService {
 
     AWSLambda client;
 
+    private static AwsLambdaService service;
+
     public AwsLambdaService() {
         log.info("Aws Lambda Service initializing");
         awsLambdaClientBuilder = AWSLambdaClientBuilder.standard()
@@ -42,6 +44,14 @@ public final class AwsLambdaService {
         InvokeResult response = client.invoke(req);
         log.info("Request complete");
         return (response.getStatusCode().equals(200));
+    }
+
+    public static synchronized AwsLambdaService getService() {
+        if (service == null) {
+            service = new AwsLambdaService();
+        }
+
+        return service;
     }
 
 }
