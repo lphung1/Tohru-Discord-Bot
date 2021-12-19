@@ -7,6 +7,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Util.ConfigUtil.getAwsRegion;
 import static Util.ConfigUtil.getEC2InstanceId;
 
 public class MessageUtil {
@@ -63,7 +64,7 @@ public class MessageUtil {
     }
 
     public static MessageBuilder getInvalidInstanceMessage() {
-        return getSimpleEmbedMessage(String.format("[%s] is not a valid instance ID, please set a valid id", getEC2InstanceId()), Color.RED );
+        return getSimpleEmbedMessage(String.format("[%s] is not a valid instance ID for region %s, please set a valid id", getEC2InstanceId()), getAwsRegion(), Color.RED );
     }
 
     public static String getOrDefault(String string, String stringIfNull) {
