@@ -1,6 +1,7 @@
 package AwsServices;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.regions.AwsRegionProvider;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeInstanceTypesRequest;
@@ -41,11 +42,19 @@ public class AwsEc2Service {
 
     private AwsEc2Service() {
         log.info("Ec2 Service initializing");
-        ec2 = AmazonEC2ClientBuilder.standard()
+        ec2 = buildEc2Client();
+        log.info("Initializing Complete");
+    }
+
+    public void updateService() {
+        ec2 = buildEc2Client();
+    }
+
+    private AmazonEC2 buildEc2Client() {
+        return AmazonEC2ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(getBasicAwsCredentials()))
                 .withRegion(getAwsRegion())
                 .build();
-        log.info("Initializing Complete");
     }
 
     public CompletableFuture<RebootInstancesResult> restartEC2Instance() {
@@ -125,7 +134,7 @@ public class AwsEc2Service {
             api.updateActivity(ActivityType.WATCHING, ec2StatusActivity);
         }
         else {
-            api.updateActivity(ActivityType.WATCHING, String.format(" invalid instanceId : [%s]",getEC2InstanceId()));
+            api.updateActivity(ActivityType.WATCHING, String.format("No valid instanceIds : [%s] for region %s",getEC2InstanceId(), getAwsRegion()));
         }
     }
 

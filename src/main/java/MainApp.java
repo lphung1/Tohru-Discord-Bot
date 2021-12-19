@@ -1,7 +1,9 @@
 import AwsServices.AwsEc2Service;
 import Listeners.DetailsCommand;
+import Listeners.GetAwsRegion;
 import Listeners.InstanceIpCommand;
 import Listeners.RebootCommand;
+import Listeners.SetAwsRegion;
 import Listeners.SetAwsRoleId;
 import Listeners.SetInstanceIdCommand;
 import Listeners.StartServerCommand;
@@ -34,6 +36,8 @@ public class MainApp {
         api.addMessageCreateListener(new DetailsCommand(api));
         api.addMessageCreateListener(new InstanceIpCommand(api));
         api.addMessageCreateListener(new SetAwsRoleId(api));
+        api.addMessageCreateListener(new SetAwsRegion(api));
+        api.addMessageCreateListener(new GetAwsRegion(api));
 
         Consumer<DiscordApi> setStatus = discordApi -> ec2Service.updateBotStatus(discordApi);
 

@@ -1,5 +1,6 @@
 package Listeners;
 
+import Util.ConfigUtil;
 import Util.MessageUtil;
 import com.amazonaws.services.ec2.model.CpuOptions;
 import com.amazonaws.services.ec2.model.Instance;
@@ -7,6 +8,7 @@ import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.InstanceTypeInfo;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -38,15 +40,19 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
 
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
+        TextChannel channel = messageCreateEvent.getChannel();
         Map<String, Instance> ec2DetailsMap = awsEc2Service.getEC2DetailsMap();
         Set<String> instanceTypeSet = ec2DetailsMap.values()
                 .stream()
                 .map(Instance::getInstanceType)
                 .collect(Collectors.toSet());
-        Map<String, InstanceTypeInfo> instanceTypeInfoMap = awsEc2Service.getInstanceTypeInfo(instanceTypeSet.stream().collect(Collectors.toList()));
+        Map<String, InstanceTypeInfo> instanceTypeInfoMap = awsEc2Service
+                .getInstanceTypeInfo(instanceTypeSet
+                .stream()
+                .collect(Collectors.toList()));
 
         if (ec2DetailsMap.isEmpty()) {
-            getSimpleEmbedMessage("No Instances to show", Color.RED);
+            getSimpleEmbedMessage("No instances for " + ConfigUtil.getAwsRegion(), Color.RED).send(channel);
             return;
         }
         Set<String> commandArgs = getMessageArgsSet(messageCreateEvent);
