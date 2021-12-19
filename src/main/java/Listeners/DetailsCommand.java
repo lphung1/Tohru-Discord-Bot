@@ -12,11 +12,14 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,9 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static Util.ConfigUtil.getAwsRegion;
 import static Util.MessageUtil.*;
 import static Util.ConfigUtil.getEC2InstanceId;
 
@@ -112,7 +117,9 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
             } catch (IOException e) {
                 log.info("Problem trying to embed image");
             }
-            embedBuilder.setFooter("Last Launched: " + launchTime.toString());
+            DateFormat dateFormat = new SimpleDateFormat("EEE, MMM d HH:mm:ss z yyyy");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+            embedBuilder.setFooter(String.format("Region: %s \nLast Launched: %s ", getAwsRegion(), dateFormat.format(instance.getLaunchTime())));
             embedBuilder.setColor(stateColorHandler(state.getCode()));
             embedBuilderList.add(embedBuilder);
         });
