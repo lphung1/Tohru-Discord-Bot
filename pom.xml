@@ -6,7 +6,7 @@
 
     <groupId>com.TohruDiscordBot</groupId>
     <artifactId>Tohru_Discord_Bot</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
