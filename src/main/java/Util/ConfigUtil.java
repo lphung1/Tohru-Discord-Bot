@@ -51,10 +51,6 @@ public class ConfigUtil {
 
     public static String getAwsRegion() { return prop.getProperty("aws.region"); }
 
-    public static String getStartLambdaName() { return prop.getProperty("aws.startLambdaName"); }
-
-    public static String getStopLambdaName() { return prop.getProperty("aws.stopLambdaName"); }
-
     public static String getEC2InstanceId() { return prop.getProperty("aws.ec2InstanceId"); }
 
     public static String getAwsDiscordRole() { return prop.getProperty("discord.awsRole"); }
@@ -63,42 +59,37 @@ public class ConfigUtil {
         return new BasicAWSCredentials(getAwsAccessKey(),getAwsSecretKey());
     }
 
+    public static String getLambdaFunction(int num) {
+        return prop.getProperty("aws.lambda."+num);
+    }
+
+    public static boolean setLambdaFunction(int lambdaNum, String lambdaArn) {
+            prop.setProperty("aws.lambda."+lambdaNum, lambdaArn);
+            return updateConfigFile();
+    }
+
     public static boolean setEc2InstanceId(String ec2InstanceId) {
-        try {
             prop.setProperty("aws.ec2InstanceId", ec2InstanceId);
-            updateConfigFile();
-            return true;
-        } catch (IOException e) {
-            log.info("Issue with writing to file.");
-            return false;
-        }
+            return updateConfigFile();
     }
 
     public static boolean setAwsRoleId(String roleId) {
-        try {
             prop.setProperty("discord.awsRole", roleId);
-            updateConfigFile();
-            return true;
-        } catch (IOException e) {
-            log.info("Issue with writing to file.");
-            return false;
-        }
+            return updateConfigFile();
     }
 
     public static boolean setAwsRegion(String roleId) {
-        try {
             prop.setProperty("aws.region", roleId);
-            updateConfigFile();
+            return updateConfigFile();
+    }
+
+    private static boolean updateConfigFile() {
+        try (OutputStream outStream = new FileOutputStream(fileName)) {
+            prop.store(outStream, "File updated");
             return true;
         } catch (IOException e) {
             log.info("Issue with writing to file.");
             return false;
-        }
-    }
-
-    private static void updateConfigFile() throws IOException {
-        try (OutputStream outStream = new FileOutputStream(fileName)) {
-            prop.store(outStream, "File updated");
         }
     }
 

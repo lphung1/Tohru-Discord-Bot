@@ -19,6 +19,7 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.activity.ActivityType;
+import org.javacord.api.entity.user.UserStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,23 @@ public class AwsEc2Service {
     static AmazonEC2 ec2;
 
     private static final Logger log = Logger.getLogger(AwsEc2Service.class.getCanonicalName());
+
+    /**
+     * 0 : pending
+     * 16 : running
+     * 32 : shutting-down
+     * 48 : terminated
+     * 64 : stopping
+     * 80 : stopped
+     */
+    private final Map<Integer, UserStatus> stateToStatusMap = new HashMap(){{
+        put(80,UserStatus.DO_NOT_DISTURB);
+        put(64, UserStatus.IDLE);
+        put(0,UserStatus.IDLE);
+        put(16, UserStatus.ONLINE);
+        put(32,UserStatus.IDLE);
+        put(48,UserStatus.DO_NOT_DISTURB);
+    }};
 
     private AwsEc2Service() {
         log.info("Ec2 Service initializing");
@@ -132,9 +150,11 @@ public class AwsEc2Service {
         if (trackedInstance != null) {
             String ec2StatusActivity = String.format("Server Status: %s", trackedInstance.getState().getName().intern());
             api.updateActivity(ActivityType.WATCHING, ec2StatusActivity);
+            api.updateStatus(stateToStatusMap.getOrDefault(trackedInstance.getState().getCode(),UserStatus.ONLINE));
         }
         else {
             api.updateActivity(ActivityType.WATCHING, String.format("No valid instanceIds : [%s] for region %s",getEC2InstanceId(), getAwsRegion()));
+            api.updateStatus(UserStatus.DO_NOT_DISTURB);
         }
     }
 

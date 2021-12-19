@@ -12,37 +12,30 @@ import java.util.logging.Logger;
 public final class AwsLambdaService {
 
     static Logger log = Logger.getLogger(AwsLambdaService.class.getName());
-    AWSLambdaClientBuilder awsLambdaClientBuilder;
 
-    AWSLambda client;
+    static AWSLambda client;
 
     private static AwsLambdaService service;
 
     private AwsLambdaService() {
-        log.info("Aws Lambda Service initializing");
-        awsLambdaClientBuilder = AWSLambdaClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(ConfigUtil.getBasicAwsCredentials()))
-                .withRegion(ConfigUtil.getAwsRegion());
+        this.updateService();
+    }
 
-        client = awsLambdaClientBuilder.build();
+    public void updateService() {
+        log.info("Aws Lambda Service initializing");
+        client = AWSLambdaClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(ConfigUtil.getBasicAwsCredentials()))
+                .withRegion(ConfigUtil.getAwsRegion()).build();
         log.info("Initializing done");
     }
 
-    public boolean startEc2() {
-        log.info("Invoking start lambda function");
+    public boolean doLambdaFunction(int num) {
+        log.info("Invoking lambda function");
         InvokeRequest req = new InvokeRequest()
-                .withFunctionName(ConfigUtil.getStartLambdaName());
+                .withFunctionName(ConfigUtil.getLambdaFunction(num));
         InvokeResult response = client.invoke(req);
         log.info("Request complete");
-        return (response.getStatusCode().equals(200));
-    }
 
-    public boolean stopEc2() {
-        log.info("Invoking stop lambda function");
-        InvokeRequest req = new InvokeRequest()
-                .withFunctionName(ConfigUtil.getStopLambdaName());
-        InvokeResult response = client.invoke(req);
-        log.info("Request complete");
         return (response.getStatusCode().equals(200));
     }
 

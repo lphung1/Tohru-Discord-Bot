@@ -94,7 +94,9 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
             InstanceState state = instance.getState();
             Date launchTime = instance.getLaunchTime();
             String instanceType = instance.getInstanceType();
-            String memSize = getOrDefault(instanceTypeInfoMap.get(instanceType).getMemoryInfo().getSizeInMiB().toString()) ;
+            float memSize = instanceTypeInfoMap.get(instanceType).getMemoryInfo().getSizeInMiB().floatValue() / 1024F ;
+            String memSizeStr = Float.toString(memSize);
+
             String clockSpeed = getOrDefault(instanceTypeInfoMap.get(instanceType).getProcessorInfo().getSustainedClockSpeedInGhz().toString());
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -103,7 +105,7 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
             embedBuilder.addInlineField("CPU Cores: ", cpuOptions.getCoreCount().toString());
             embedBuilder.addInlineField("CPU Threads: ", cpuOptions.getThreadsPerCore().toString());
             embedBuilder.addInlineField("Clock Speed: ", clockSpeed + " Ghz");
-            embedBuilder.addInlineField("Memory:", String.format("%s MiB",memSize));
+            embedBuilder.addInlineField("Memory:", String.format("%s GB",memSizeStr));
             embedBuilder.addInlineField("Status: ", state.getName());
             embedBuilder.addInlineField("Instance Type:", instance.getInstanceType());
 

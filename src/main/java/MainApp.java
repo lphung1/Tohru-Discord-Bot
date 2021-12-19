@@ -9,14 +9,12 @@ import Listeners.SetInstanceIdCommand;
 import Listeners.StartServerCommand;
 import Listeners.StopServerCommand;
 import Util.ConfigUtil;
-import Util.RunnableCallback;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class MainApp {
@@ -39,11 +37,11 @@ public class MainApp {
         api.addMessageCreateListener(new SetAwsRegion(api));
         api.addMessageCreateListener(new GetAwsRegion(api));
 
-        Consumer<DiscordApi> setStatus = discordApi -> ec2Service.updateBotStatus(discordApi);
+        Runnable setStatus = () -> ec2Service.updateBotStatus(api);
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-        scheduler.scheduleAtFixedRate(new RunnableCallback<>(setStatus, api), 0, 3, TimeUnit.MINUTES );
+        scheduler.scheduleAtFixedRate(setStatus, 0, 3, TimeUnit.MINUTES );
 
         log.info("Bot now listening");
     }
