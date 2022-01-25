@@ -1,24 +1,30 @@
 import AwsServices.AwsEc2Service;
-import Listeners.DetailsCommand;
-import Listeners.GetAwsRegion;
-import Listeners.InstanceIpCommand;
-import Listeners.RebootCommand;
-import Listeners.SetAwsRegion;
-import Listeners.SetAwsRoleId;
-import Listeners.SetInstanceIdCommand;
-import Listeners.StartServerCommand;
-import Listeners.StopServerCommand;
+import Listeners.AwsCommands.DetailsCommand;
+import Listeners.AwsCommands.GetAwsRegion;
+import Listeners.AwsCommands.InstanceIpCommand;
+import Listeners.AwsCommands.RebootCommand;
+import Listeners.AwsCommands.SetAwsRegion;
+import Listeners.CommandWrapper;
+import Listeners.HelpCommand;
+import Listeners.OwnerCommands.BillingCommand;
+import Listeners.OwnerCommands.SetAwsRoleId;
+import Listeners.AwsCommands.SetInstanceIdCommand;
+import Listeners.AwsCommands.StartServerCommand;
+import Listeners.AwsCommands.StopServerCommand;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class MainApp {
-    private static Logger log = Logger.getLogger(MainApp.class.getName());
+    private static Logger log = LoggerFactory.getLogger(MainApp.class);
     private static AwsEc2Service ec2Service = AwsEc2Service.getService();
 
     public static void main(String[] args) {
@@ -27,25 +33,26 @@ public class MainApp {
                 .setToken(ConfigUtil.getDiscordToken())
                 .login()
                 .join();
-        api.addMessageCreateListener(new StartServerCommand(api));
-        api.addMessageCreateListener(new StopServerCommand(api));
-        api.addMessageCreateListener(new SetInstanceIdCommand(api));
-        api.addMessageCreateListener(new RebootCommand(api));
-        api.addMessageCreateListener(new DetailsCommand(api));
-        api.addMessageCreateListener(new InstanceIpCommand(api));
-        api.addMessageCreateListener(new SetAwsRoleId(api));
-        api.addMessageCreateListener(new SetAwsRegion(api));
-        api.addMessageCreateListener(new GetAwsRegion(api));
 
+        List<CommandWrapper> listenerList = new ArrayList();
+        listenerList.add(new StartServerCommand(api, "start"));
+        listenerList.add(new StopServerCommand(api, "stop"));
+        listenerList.add(new SetInstanceIdCommand(api, "track"));
+        listenerList.add(new RebootCommand(api, "reboot"));
+        listenerList.add(new DetailsCommand(api, "details"));
+        listenerList.add(new InstanceIpCommand(api, "serverIp"));
+        listenerList.add(new SetAwsRoleId(api, "setAwsRole"));
+        listenerList.add(new SetAwsRegion(api, "setRegion"));
+        listenerList.add(new GetAwsRegion(api, "region"));
+        listenerList.add(new BillingCommand(api, "bill"));
+        listenerList.add(new HelpCommand(api, "help", listenerList));
+
+        listenerList.forEach(listener -> api.addMessageCreateListener(listener));
         Runnable setStatus = () -> ec2Service.updateBotStatus(api);
-
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
         scheduler.scheduleAtFixedRate(setStatus, 0, 3, TimeUnit.MINUTES );
 
-        log.info("Bot now listening");
+        log.info("Bot is now listening");
     }
-
-
-
 }

@@ -4,13 +4,11 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
-import java.awt.*;
-
-import static Util.MessageUtil.getSimpleEmbedMessage;
+import static Util.MessageUtil.getSimpleErrorMessage;
 
 public abstract class OwnerCommand extends CommandWrapper {
 
-    OwnerCommand(DiscordApi api, String command) {
+    public OwnerCommand(DiscordApi api, String command) {
         super(api, command);
     }
 
@@ -21,7 +19,7 @@ public abstract class OwnerCommand extends CommandWrapper {
             doOwnerCommand(messageCreateEvent);
         }
         else {
-            getSimpleEmbedMessage("You do not have permissions to use that command", Color.RED)
+            getSimpleErrorMessage("You do not have permissions to use that command")
                     .send(messageCreateEvent.getChannel());
         }
     }

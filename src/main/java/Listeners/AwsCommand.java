@@ -1,7 +1,9 @@
 package Listeners;
 
+import AwsServices.AwsCostExplorerService;
 import AwsServices.AwsEc2Service;
 import AwsServices.AwsLambdaService;
+import Listeners.CommandWrapper;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -17,14 +19,16 @@ import static Util.MessageUtil.*;
 
 public abstract class AwsCommand extends CommandWrapper {
 
-    AwsLambdaService awsLambdaService;
-    AwsEc2Service awsEc2Service;
-    Role awsRole;
+    protected AwsLambdaService awsLambdaService;
+    protected AwsEc2Service awsEc2Service;
+    protected AwsCostExplorerService costExplorerService;
+    protected Role awsRole;
 
-    AwsCommand(DiscordApi api, String command) {
+    public AwsCommand(DiscordApi api, String command) {
         super(api, command);
         awsLambdaService = AwsLambdaService.getService();
         awsEc2Service = AwsEc2Service.getService();
+        costExplorerService = AwsCostExplorerService.getService();
         api.getRoleById(ConfigUtil.getAwsDiscordRole()).ifPresent(role -> awsRole = role);
     }
 
@@ -37,7 +41,7 @@ public abstract class AwsCommand extends CommandWrapper {
             awsEc2Service.updateBotStatus(api);
         }
         else {
-            getSimpleEmbedMessage("You do not have permissions to use that command", Color.RED)
+            getSimpleErrorMessage("You do not have permissions to use that command")
                     .send(messageCreateEvent.getChannel());
         }
     }

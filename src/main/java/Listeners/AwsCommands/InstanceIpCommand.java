@@ -1,15 +1,15 @@
-package Listeners;
+package Listeners.AwsCommands;
 
+import Listeners.AwsCommand;
+import Listeners.CommandDescriptions;
 import com.amazonaws.services.ec2.model.Instance;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
-import java.util.Set;
 
 import static Util.ConfigUtil.*;
 import static Util.MessageUtil.*;
@@ -18,6 +18,11 @@ public class InstanceIpCommand extends AwsCommand {
 
     public InstanceIpCommand(DiscordApi api) {
         super(api, "serverIp");
+    }
+
+    public InstanceIpCommand(DiscordApi api, String command) {
+        super(api, command);
+        this.description = CommandDescriptions.serverIp;
     }
 
     @Override

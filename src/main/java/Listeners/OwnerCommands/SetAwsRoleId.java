@@ -1,5 +1,7 @@
-package Listeners;
+package Listeners.OwnerCommands;
 
+import Listeners.CommandDescriptions;
+import Listeners.OwnerCommand;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
@@ -16,21 +18,28 @@ public class SetAwsRoleId extends OwnerCommand {
         super(api, "setAwsRole");
     }
 
+    public SetAwsRoleId(DiscordApi api, String command) {
+        super(api, command);
+        this.description = CommandDescriptions.setAwsRole;
+    }
+
     @Override
     public void doOwnerCommand(MessageCreateEvent messageCreateEvent) {
-        String[] strArr = messageCreateEvent.getMessageContent().split(" ");
         TextChannel channel = messageCreateEvent.getChannel();
-        if (hasInput(strArr, channel)) {
-
-            if (isValidRole(messageCreateEvent, strArr[2])) {
-                ConfigUtil.setAwsRoleId(strArr[2]);
+        if (hasArgument()) {
+            if (isValidRole(messageCreateEvent, getLastArgument())) {
+                ConfigUtil.setAwsRoleId(getLastArgument());
                 getSimpleEmbedMessage("New aws role has been set", Color.BLUE)
                         .send(channel);
             }
             else {
-                getSimpleEmbedMessage("That's not a valid role Id for this server", Color.RED)
+                getSimpleErrorMessage("That's not a valid role Id for this server")
                         .send(channel);
             }
+        }
+        else {
+            getSimpleEmbedMessage("No arguments found, please enter a roleId", Color.RED)
+                    .send(channel);
         }
     }
 
@@ -40,17 +49,6 @@ public class SetAwsRoleId extends OwnerCommand {
                 .stream()
                 .map(Role::getIdAsString)
                 .anyMatch(id -> id.equals(input));
-    }
-
-    private boolean hasInput(String[] strArr, TextChannel channel) {
-        if (strArr != null && strArr.length > 2) {
-            return true;
-        }
-        else {
-            getSimpleEmbedMessage("No arguments found, please enter a roleId", Color.RED)
-                    .send(channel);
-            return false;
-        }
     }
 
 }

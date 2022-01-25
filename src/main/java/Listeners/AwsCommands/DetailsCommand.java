@@ -1,18 +1,18 @@
-package Listeners;
+package Listeners.AwsCommands;
 
+import Listeners.AwsCommand;
+import Listeners.CommandDescriptions;
 import Util.ConfigUtil;
-import Util.MessageUtil;
 import com.amazonaws.services.ec2.model.CpuOptions;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.InstanceState;
-import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.InstanceTypeInfo;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.joda.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TimeZone;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -43,29 +44,35 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
         super(api, "details");
     }
 
+    public DetailsCommand(DiscordApi api, String command) {
+        super(api, command);
+        this.description = CommandDescriptions.details;
+    }
+
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
         TextChannel channel = messageCreateEvent.getChannel();
+        CompletableFuture<Message> message = getSimpleEmbedMessage("Fetching ...").send(channel);
         Map<String, Instance> ec2DetailsMap = awsEc2Service.getEC2DetailsMap();
         Set<String> instanceTypeSet = ec2DetailsMap.values()
                 .stream()
                 .map(Instance::getInstanceType)
                 .collect(Collectors.toSet());
         Map<String, InstanceTypeInfo> instanceTypeInfoMap = awsEc2Service
-                .getInstanceTypeInfo(instanceTypeSet
-                .stream()
-                .collect(Collectors.toList()));
+                .getInstanceTypeInfo(new ArrayList<>(instanceTypeSet));
 
         if (ec2DetailsMap.isEmpty()) {
-            getSimpleEmbedMessage("No instances for " + ConfigUtil.getAwsRegion(), Color.RED).send(channel);
+            message.join().edit(getSimpleEmbed("No instances for " + ConfigUtil.getAwsRegion(), Color.RED));
             return;
         }
         Set<String> commandArgs = getMessageArgsSet(messageCreateEvent);
 
         if (commandArgs.contains("all")) {
+            message.join().delete();
             showAllInstances(ec2DetailsMap, instanceTypeInfoMap).send(messageCreateEvent.getChannel());
         }
         else {
+            message.join().delete();
             showTrackedInstance(ec2DetailsMap, instanceTypeInfoMap).send(messageCreateEvent.getChannel());
         }
     }
@@ -81,9 +88,7 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
             return new MessageBuilder().addEmbeds(ec2Details(singleInstanceList, instanceTypeInfoMap));
         }
         else {
-            return getSimpleEmbedMessage(
-                    String.format("[%s] is not a valid instance. Please set a valid instanceId to track", getEC2InstanceId()),
-                    Color.RED);
+            return getInvalidInstanceMessage();
         }
     }
 

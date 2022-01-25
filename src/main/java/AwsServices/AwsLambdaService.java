@@ -6,12 +6,12 @@ import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AwsLambdaService {
 
-    static Logger log = Logger.getLogger(AwsLambdaService.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(AwsLambdaService.class);
 
     static AWSLambda client;
 

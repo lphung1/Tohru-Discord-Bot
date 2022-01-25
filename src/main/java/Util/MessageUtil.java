@@ -44,11 +44,27 @@ public class MessageUtil {
         return getSimpleEmbedMessage(title, description, defaultColor);
     }
 
+    public static EmbedBuilder getSimpleEmbed(String title, String description, Color color) {
+        return new EmbedBuilder().setDescription(description)
+                .setTitle(title)
+                .setColor(color);
+    }
+
+
+    public static EmbedBuilder getSimpleEmbed(String title) {
+        return new EmbedBuilder()
+                .setTitle(title)
+                .setColor(defaultColor);
+    }
+
+    public static EmbedBuilder getSimpleEmbed(String title, Color color) {
+        return new EmbedBuilder().setTitle(title)
+                .setColor(color);
+    }
+
     public static MessageBuilder getSimpleEmbedMessage(String title, String description, Color color) {
         return new MessageBuilder().addEmbed(
-                new EmbedBuilder().setDescription(description)
-                        .setTitle(title)
-                        .setColor(color)
+                getSimpleEmbed(title, description, color)
         );
     }
 
@@ -58,9 +74,12 @@ public class MessageUtil {
 
     public static MessageBuilder getSimpleEmbedMessage(String message, Color color) {
         return new MessageBuilder().addEmbed(
-                new EmbedBuilder().setTitle(message)
-                        .setColor(color)
+                getSimpleEmbed(message, color)
         );
+    }
+
+    public static MessageBuilder getSimpleErrorMessage(String message) {
+        return getSimpleEmbedMessage(message, Color.RED);
     }
 
     public static MessageBuilder getInvalidInstanceMessage() {
