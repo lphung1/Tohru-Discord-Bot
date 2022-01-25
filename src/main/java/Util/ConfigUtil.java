@@ -1,6 +1,9 @@
 package Util;
 
+import AwsServices.AwsEc2Service;
 import com.amazonaws.auth.BasicAWSCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,12 +16,11 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConfigUtil {
     static Properties prop = new Properties();
     static String fileName = getPath("bot.properties");
-    static Logger log = Logger.getLogger(ConfigUtil.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ConfigUtil.class);
     static {
         loadProperties();
         log.info("Properties loaded");
@@ -29,9 +31,9 @@ public class ConfigUtil {
         try (InputStream fis = new FileInputStream(fileName)) {
             prop.load(fis);
         } catch (FileNotFoundException ex) {
-            log.log(Level.SEVERE, "File not found, make sure there is a bot.properties file in src/main/resources");
+            log.error("File not found, make sure there is a bot.properties file in src/main/resources");
         } catch (IOException ex) {
-            log.log(Level.SEVERE, "Issue Reading file");
+            log.error("Issue Reading file");
         }
 
         return prop;

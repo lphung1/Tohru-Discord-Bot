@@ -1,5 +1,7 @@
-package Listeners;
+package Listeners.AwsCommands;
 
+import Listeners.AwsCommand;
+import Listeners.CommandDescriptions;
 import Util.ConfigUtil;
 import com.amazonaws.regions.Regions;
 import org.javacord.api.DiscordApi;
@@ -11,6 +13,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 import static Util.MessageUtil.getSimpleEmbedMessage;
+import static Util.MessageUtil.getSimpleErrorMessage;
 
 public class SetAwsRegion extends AwsCommand {
 
@@ -18,18 +21,22 @@ public class SetAwsRegion extends AwsCommand {
         super(api, "setRegion");
     }
 
+    public SetAwsRegion(DiscordApi api, String command) {
+        super(api, command);
+        this.description = CommandDescriptions.setRegion;
+    }
+
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
-        String[] strArr = messageCreateEvent.getMessageContent().split(" ");
         TextChannel channel = messageCreateEvent.getChannel();
-        if (strArr != null && strArr.length > 2 && isValidRegion(strArr[2], channel)) {
-            String arg = strArr[2];
-            if (ConfigUtil.setAwsRegion(arg)) {
+        if (isValidRegion(getLastArgument(), channel)) {
+            if (ConfigUtil.setAwsRegion(getLastArgument())) {
                 awsEc2Service.updateService();
-                getSimpleEmbedMessage(String.format("Updated Region : %s", arg))
+                costExplorerService.updateService();
+                getSimpleEmbedMessage(String.format("Updated Region : %s", getLastArgument()))
                         .send(channel);
             } else {
-                getSimpleEmbedMessage("Issue with setting instance Id.", Color.RED)
+                getSimpleErrorMessage("Issue with setting region.")
                         .send(channel);
             }
         }

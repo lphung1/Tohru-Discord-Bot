@@ -1,7 +1,6 @@
 package AwsServices;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.regions.AwsRegionProvider;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeInstanceTypesRequest;
@@ -20,6 +19,8 @@ import com.amazonaws.services.ec2.model.StopInstancesResult;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.user.UserStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static Util.ConfigUtil.*;
@@ -39,7 +39,7 @@ public class AwsEc2Service {
 
     static AmazonEC2 ec2;
 
-    private static final Logger log = Logger.getLogger(AwsEc2Service.class.getCanonicalName());
+    private static final Logger log = LoggerFactory.getLogger(AwsEc2Service.class);
 
     /**
      * 0 : pending
@@ -148,7 +148,7 @@ public class AwsEc2Service {
         log.info("Updating bot status");
         Instance trackedInstance = getEC2DetailsMap().get(getEC2InstanceId());
         if (trackedInstance != null) {
-            String ec2StatusActivity = String.format("Server Status: %s", trackedInstance.getState().getName().intern());
+            String ec2StatusActivity = String.format("Server: %s", trackedInstance.getState().getName().intern());
             api.updateActivity(ActivityType.WATCHING, ec2StatusActivity);
             api.updateStatus(stateToStatusMap.getOrDefault(trackedInstance.getState().getCode(),UserStatus.ONLINE));
         }
