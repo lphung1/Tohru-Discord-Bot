@@ -31,7 +31,7 @@ public class ConfigUtil {
         try (InputStream fis = new FileInputStream(fileName)) {
             prop.load(fis);
         } catch (FileNotFoundException ex) {
-            log.error("File not found, make sure there is a bot.properties file in src/main/resources");
+            log.error("File not found, make sure there is a bot.properties file runBot folder");
         } catch (IOException ex) {
             log.error("Issue Reading file");
         }
