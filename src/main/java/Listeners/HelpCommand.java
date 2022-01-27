@@ -2,6 +2,7 @@ package Listeners;
 
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
@@ -35,5 +36,6 @@ public class HelpCommand extends CommandWrapper {
                         .setTitle("Available Commands")
                         .setDescription(sb.toString())
                         .setColor(new Color(48, 97, 219))).send(user);
+        messageCreateEvent.getMessage().addReaction("✅");
     }
 }

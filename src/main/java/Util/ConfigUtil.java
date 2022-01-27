@@ -31,7 +31,7 @@ public class ConfigUtil {
         try (InputStream fis = new FileInputStream(fileName)) {
             prop.load(fis);
         } catch (FileNotFoundException ex) {
-            log.error("File not found, make sure there is a bot.properties file in src/main/resources");
+            log.error("File not found, make sure there is a bot.properties file runBot folder");
         } catch (IOException ex) {
             log.error("Issue Reading file");
         }
@@ -83,6 +83,19 @@ public class ConfigUtil {
     public static boolean setAwsRegion(String roleId) {
             prop.setProperty("aws.region", roleId);
             return updateConfigFile();
+    }
+
+    public static boolean setAwsAlias(String instanceId, String aliasName) {
+        prop.setProperty("aws.alias." + instanceId, aliasName );
+        return updateConfigFile();
+    }
+
+    public static boolean hasAlias(String instanceId) {
+        return prop.getProperty("aws.alias."+instanceId) != null;
+    }
+
+    public static String getInstanceAlias(String instanceId) {
+        return prop.getProperty("aws.alias."+instanceId);
     }
 
     private static boolean updateConfigFile() {

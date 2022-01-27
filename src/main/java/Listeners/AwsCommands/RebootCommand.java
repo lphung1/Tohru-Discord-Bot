@@ -31,17 +31,13 @@ public class RebootCommand extends AwsCommand {
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
         TextChannel channel = messageCreateEvent.getChannel();
-        CompletableFuture<Message> message = getSimpleEmbedMessage("Request Sent").send(channel);
         if (awsEc2Service.isValidInstanceId(getEC2InstanceId())) {
             RebootInstancesResult result = awsEc2Service.restartEC2Instance().join();
             Integer httpRespCode = result.getSdkHttpMetadata().getHttpStatusCode();
             String content = String.format("Request completed with response [%s]", httpRespCode);
-            message.join().edit(
-                    getSimpleEmbed(content, statusCodeColorMap.getOrDefault(httpRespCode, Color.orange))
-            );
+            getSimpleEmbedMessage(content, statusCodeColorMap.getOrDefault(httpRespCode, Color.orange)).send(channel);
         }
         else {
-            message.join().delete();
             getInvalidInstanceMessage().send(channel);
         }
     }

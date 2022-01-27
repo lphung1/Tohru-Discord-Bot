@@ -13,4 +13,5 @@ public interface CommandDescriptions {
     String getRegion = "Shows the current aws region";
     String help = "Help command";
     String bill = "Shows billing information";
+    String alias = "Sets a nickname for the instance to easily see what server it's for.\n use <instanceId> <nickname> params or just <nickname> to update current tracked instance";
 }

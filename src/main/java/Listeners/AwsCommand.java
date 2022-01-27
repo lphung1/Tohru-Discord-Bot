@@ -13,6 +13,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static Util.MessageUtil.*;
@@ -35,10 +36,11 @@ public abstract class AwsCommand extends CommandWrapper {
     @Override
     public void doAction(MessageCreateEvent messageCreateEvent) {
         User thisUser = messageCreateEvent.getMessage().getUserAuthor().get();
-        List<Role> userRoles = thisUser.getRoles(messageCreateEvent.getServer().get());
+        boolean isTriggeredFromServer = messageCreateEvent.getServer().isPresent();
+        List<Role> userRoles = (isTriggeredFromServer) ? thisUser.getRoles(messageCreateEvent.getServer().get()) : new ArrayList<>();
         if (userRoles.contains(awsRole) || messageCreateEvent.getMessageAuthor().isBotOwner()) {
             doAwsAction(messageCreateEvent);
-            awsEc2Service.updateBotStatus(api);
+            api.getThreadPool().getExecutorService().submit(() -> awsEc2Service.updateBotStatus(api));
         }
         else {
             getSimpleErrorMessage("You do not have permissions to use that command")
