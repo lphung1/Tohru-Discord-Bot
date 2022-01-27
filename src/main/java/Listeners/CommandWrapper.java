@@ -1,10 +1,15 @@
 package Listeners;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.MessageDecoration;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.util.NonThrowingAutoCloseable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +18,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class CommandWrapper implements MessageCreateListener {
+
+    private static final Logger log = LoggerFactory.getLogger(CommandWrapper.class);
 
     protected DiscordApi api;
     protected static String prefix;
@@ -39,7 +46,10 @@ public abstract class CommandWrapper implements MessageCreateListener {
         try {
             if (botInvoked.apply(messageCreateEvent) && messageCreateEvent.getMessageContent().contains(command)) {
                 argumentList = getMessageArgList(messageCreateEvent);
-                doAction(messageCreateEvent);
+                try (NonThrowingAutoCloseable typingIndicator = messageCreateEvent.getChannel().typeContinuously(e -> log.error(e.toString()))) {
+                    doAction(messageCreateEvent);
+                    log.info("Command [{}] complete", command);
+                }
             }
         }
         catch (Exception e) {
@@ -77,10 +87,23 @@ public abstract class CommandWrapper implements MessageCreateListener {
         return (hasArgument()) ? lastArg : null;
     }
 
-    protected boolean hasArgument() {
+    protected String getSecondLastArgument() {
         int argSize = argumentList.size();
-        if (argSize > 1) {
-            String lastArg = argumentList.get(argSize - 1);
+        String secondLastArg = null;
+        if (argSize > 2) {
+            secondLastArg = argumentList.get(argSize - 2);
+        }
+        return (hasArgument()) ? secondLastArg : null;
+    }
+
+    protected boolean hasArgument() {
+        return hasArgument(1);
+    }
+
+    protected boolean hasArgument(int numArguments) {
+        int argSize = argumentList.size();
+        if (argSize > numArguments) {
+            String lastArg = argumentList.get(argSize - numArguments);
             return !lastArg.equalsIgnoreCase(command);
         }
         return false;

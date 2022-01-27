@@ -4,6 +4,7 @@ import Listeners.AwsCommands.GetAwsRegion;
 import Listeners.AwsCommands.InstanceIpCommand;
 import Listeners.AwsCommands.RebootCommand;
 import Listeners.AwsCommands.SetAwsRegion;
+import Listeners.AwsCommands.SetInstanceAlias;
 import Listeners.CommandWrapper;
 import Listeners.HelpCommand;
 import Listeners.OwnerCommands.BillingCommand;
@@ -46,6 +47,7 @@ public class MainApp {
         listenerList.add(new GetAwsRegion(api, "region"));
         listenerList.add(new BillingCommand(api, "bill"));
         listenerList.add(new HelpCommand(api, "help", listenerList));
+        listenerList.add(new SetInstanceAlias(api, "alias"));
 
         listenerList.forEach(listener -> api.addMessageCreateListener(listener));
         Runnable setStatus = () -> ec2Service.updateBotStatus(api);

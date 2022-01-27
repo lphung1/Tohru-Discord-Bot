@@ -85,6 +85,19 @@ public class ConfigUtil {
             return updateConfigFile();
     }
 
+    public static boolean setAwsAlias(String instanceId, String aliasName) {
+        prop.setProperty("aws.alias." + instanceId, aliasName );
+        return updateConfigFile();
+    }
+
+    public static boolean hasAlias(String instanceId) {
+        return prop.getProperty("aws.alias."+instanceId) != null;
+    }
+
+    public static String getInstanceAlias(String instanceId) {
+        return prop.getProperty("aws.alias."+instanceId);
+    }
+
     private static boolean updateConfigFile() {
         try (OutputStream outStream = new FileOutputStream(fileName)) {
             prop.store(outStream, "File updated");

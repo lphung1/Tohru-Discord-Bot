@@ -25,16 +25,13 @@ public class StartServerCommand extends AwsCommand {
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
         TextChannel channel = messageCreateEvent.getChannel();
-        CompletableFuture<Message> message = getSimpleEmbedMessage("Request Sent").send(channel);
         if (awsEc2Service.isValidInstanceId(getEC2InstanceId())) {
             StartInstancesResult result = awsEc2Service.startEc2Instance().join();
             Integer httpRespCode = result.getSdkHttpMetadata().getHttpStatusCode();
-            message.join().edit(
-            getSimpleEmbed(String.format("Request completed with response [%s]", httpRespCode)
-            , statusCodeColorMap.getOrDefault(httpRespCode, Color.orange)));
+            getSimpleEmbedMessage(String.format("Request completed with response [%s]", httpRespCode)
+                    , statusCodeColorMap.getOrDefault(httpRespCode, Color.orange)).send(channel);
         }
         else {
-            message.join().delete();
             getInvalidInstanceMessage().send(channel);
         }
     }

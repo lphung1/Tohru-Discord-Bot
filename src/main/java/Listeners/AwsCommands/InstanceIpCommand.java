@@ -30,6 +30,7 @@ public class InstanceIpCommand extends AwsCommand {
         if (awsEc2Service.isValidInstanceId(getEC2InstanceId())) {
             Instance inst = awsEc2Service.getEC2DetailsMap().get(getEC2InstanceId());
             User user = messageCreateEvent.getMessageAuthor().asUser().get();
+            messageCreateEvent.getMessage().addReaction("✅");
             new MessageBuilder()
                     .addEmbed(new EmbedBuilder().setTitle("Shhh, please keep this between us")
                             .setDescription("Server IP details for " + getEC2InstanceId())

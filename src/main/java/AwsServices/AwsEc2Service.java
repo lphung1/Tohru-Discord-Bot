@@ -145,10 +145,10 @@ public class AwsEc2Service {
     }
 
     public void updateBotStatus(DiscordApi api) {
-        log.info("Updating bot status");
         Instance trackedInstance = getEC2DetailsMap().get(getEC2InstanceId());
         if (trackedInstance != null) {
-            String ec2StatusActivity = String.format("Server: %s", trackedInstance.getState().getName().intern());
+            String alias = hasAlias(getEC2InstanceId()) ? String.format("(%s)", getInstanceAlias(getEC2InstanceId())) : "";
+            String ec2StatusActivity = String.format("Server: %s %s", trackedInstance.getState().getName().intern(), alias);
             api.updateActivity(ActivityType.WATCHING, ec2StatusActivity);
             api.updateStatus(stateToStatusMap.getOrDefault(trackedInstance.getState().getCode(),UserStatus.ONLINE));
         }
@@ -156,6 +156,7 @@ public class AwsEc2Service {
             api.updateActivity(ActivityType.WATCHING, String.format("No valid instanceIds : [%s] for region %s",getEC2InstanceId(), getAwsRegion()));
             api.updateStatus(UserStatus.DO_NOT_DISTURB);
         }
+        log.info("Bot status updated");
     }
 
     public boolean isValidInstanceId(String instanceId) {

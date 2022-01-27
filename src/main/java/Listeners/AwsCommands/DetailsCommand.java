@@ -33,6 +33,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static Util.ConfigUtil.getAwsRegion;
+import static Util.ConfigUtil.getInstanceAlias;
+import static Util.ConfigUtil.hasAlias;
 import static Util.MessageUtil.*;
 import static Util.ConfigUtil.getEC2InstanceId;
 
@@ -52,7 +54,6 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
         TextChannel channel = messageCreateEvent.getChannel();
-        CompletableFuture<Message> message = getSimpleEmbedMessage("Fetching ...").send(channel);
         Map<String, Instance> ec2DetailsMap = awsEc2Service.getEC2DetailsMap();
         Set<String> instanceTypeSet = ec2DetailsMap.values()
                 .stream()
@@ -62,17 +63,15 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
                 .getInstanceTypeInfo(new ArrayList<>(instanceTypeSet));
 
         if (ec2DetailsMap.isEmpty()) {
-            message.join().edit(getSimpleEmbed("No instances for " + ConfigUtil.getAwsRegion(), Color.RED));
+            getSimpleEmbedMessage("No instances for " + ConfigUtil.getAwsRegion(), Color.RED).send(channel);
             return;
         }
         Set<String> commandArgs = getMessageArgsSet(messageCreateEvent);
 
         if (commandArgs.contains("all")) {
-            message.join().delete();
             showAllInstances(ec2DetailsMap, instanceTypeInfoMap).send(messageCreateEvent.getChannel());
         }
         else {
-            message.join().delete();
             showTrackedInstance(ec2DetailsMap, instanceTypeInfoMap).send(messageCreateEvent.getChannel());
         }
     }
@@ -101,11 +100,11 @@ public class DetailsCommand<T extends Instance> extends AwsCommand {
             String instanceType = instance.getInstanceType();
             float memSize = instanceTypeInfoMap.get(instanceType).getMemoryInfo().getSizeInMiB().floatValue() / 1024F ;
             String memSizeStr = Float.toString(memSize);
-
+            String alias = hasAlias(instance.getInstanceId()) ? String.format(" (%s)",getInstanceAlias(instance.getInstanceId()))  : "";
             String clockSpeed = getOrDefault(instanceTypeInfoMap.get(instanceType).getProcessorInfo().getSustainedClockSpeedInGhz().toString());
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle("EC2 instance: " + instance.getInstanceId());
+            embedBuilder.setTitle("EC2 instance: " + instance.getInstanceId() + alias);
             CpuOptions cpuOptions = instance.getCpuOptions();
             embedBuilder.addInlineField("CPU Cores: ", cpuOptions.getCoreCount().toString());
             embedBuilder.addInlineField("CPU Threads: ", cpuOptions.getThreadsPerCore().toString());
