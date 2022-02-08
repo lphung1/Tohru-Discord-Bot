@@ -1,5 +1,6 @@
-package AwsServices;
+package Services.AwsServices;
 
+import Services.ExecutorProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
@@ -37,7 +38,7 @@ public class AwsEc2Service {
 
     private static AwsEc2Service singletonInstance;
 
-    static AmazonEC2 ec2;
+    private static AmazonEC2 ec2;
 
     private static final Logger log = LoggerFactory.getLogger(AwsEc2Service.class);
 
@@ -76,28 +77,33 @@ public class AwsEc2Service {
     }
 
     public CompletableFuture<RebootInstancesResult> restartEC2Instance() {
-        String instanceId = getEC2InstanceId();
+        return restartEC2Instance(getEC2InstanceId());
+    }
 
+    public CompletableFuture<RebootInstancesResult> restartEC2Instance(String instanceId) {
         log.info("Restarting ec2 instance with ID: " + instanceId);
         RebootInstancesRequest request = new RebootInstancesRequest().withInstanceIds(instanceId);
-
         return CompletableFuture.supplyAsync( () -> ec2.rebootInstances(request));
     }
 
     public CompletableFuture<StartInstancesResult> startEc2Instance() {
-        String instanceId = getEC2InstanceId();
+        return startEc2Instance(getEC2InstanceId());
+    }
+
+    public CompletableFuture<StartInstancesResult> startEc2Instance(String instanceId) {
         log.info("Starting ec2 instance with ID: " + instanceId);
-        StartInstancesRequest request = new StartInstancesRequest()
-                .withInstanceIds(getEC2InstanceId());
+        StartInstancesRequest request = new StartInstancesRequest().withInstanceIds(instanceId);
         return CompletableFuture.supplyAsync(() -> ec2.startInstances(request));
     }
 
     public CompletableFuture<StopInstancesResult> stopEc2Instance() {
-        String instanceId = getEC2InstanceId();
+        return stopEc2Instance(getEC2InstanceId());
+    }
+
+    public CompletableFuture<StopInstancesResult> stopEc2Instance(String instanceId) {
         log.info("Stopping ec2 instance with ID: " + instanceId);
-        StopInstancesRequest request = new StopInstancesRequest()
-                .withInstanceIds(getEC2InstanceId());
-        return CompletableFuture.supplyAsync(() -> ec2.stopInstances(request));
+        StopInstancesRequest request = new StopInstancesRequest().withInstanceIds(instanceId);
+        return CompletableFuture.supplyAsync(() -> ec2.stopInstances(request), ExecutorProvider.getExecutorService());
     }
 
     public Map<String, InstanceTypeInfo> getInstanceTypeInfo(List<String> instanceType) {
@@ -121,6 +127,10 @@ public class AwsEc2Service {
         return instanceTypeInfoMap;
     }
 
+    /**
+     * Returns a map of Instance objects keyed by instance id's
+     * @return
+     */
     public Map<String, Instance> getEC2DetailsMap() {
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         boolean done = false;

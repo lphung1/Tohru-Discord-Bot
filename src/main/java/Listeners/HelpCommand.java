@@ -31,11 +31,12 @@ public class HelpCommand extends CommandWrapper {
         StringBuilder sb = new StringBuilder();
         allCommands.forEach(command -> sb.append(String.format("%s**%s** \n %s\n\n", prefix2 , command.getCommandName(), getOrDefault(command.getCommandDescription()) ) ));
         User user = messageCreateEvent.getMessageAuthor().asUser().get();
+        String checkEmoji = "✅";
         new MessageBuilder()
                 .addEmbed(embedBuilder
                         .setTitle("Available Commands")
                         .setDescription(sb.toString())
                         .setColor(new Color(48, 97, 219))).send(user);
-        messageCreateEvent.getMessage().addReaction("✅");
+        messageCreateEvent.getMessage().addReaction(checkEmoji);
     }
 }

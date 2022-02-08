@@ -1,21 +1,15 @@
 package Listeners.AwsCommands;
 
-import Listeners.AwsCommand;
 import Listeners.CommandDescriptions;
 import com.amazonaws.services.ec2.model.StartInstancesResult;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import static Util.MessageUtil.getSimpleEmbedMessage;
+import static Util.MessageUtil.statusCodeColorMap;
 
-import static Util.ConfigUtil.getEC2InstanceId;
-import static Util.MessageUtil.*;
-
-public class StartServerCommand extends AwsCommand {
+public class StartServerCommand extends InstanceStateManager {
 
     public StartServerCommand(DiscordApi api, String command) {
         super(api, command);
@@ -23,17 +17,10 @@ public class StartServerCommand extends AwsCommand {
     }
 
     @Override
-    public void doAwsAction(MessageCreateEvent messageCreateEvent) {
-        TextChannel channel = messageCreateEvent.getChannel();
-        if (awsEc2Service.isValidInstanceId(getEC2InstanceId())) {
-            StartInstancesResult result = awsEc2Service.startEc2Instance().join();
-            Integer httpRespCode = result.getSdkHttpMetadata().getHttpStatusCode();
-            getSimpleEmbedMessage(String.format("Request completed with response [%s]", httpRespCode)
-                    , statusCodeColorMap.getOrDefault(httpRespCode, Color.orange)).send(channel);
-        }
-        else {
-            getInvalidInstanceMessage().send(channel);
-        }
+    public void changeInstanceState(MessageCreateEvent messageCreateEvent, String instanceId) {
+        StartInstancesResult result = awsEc2Service.startEc2Instance(instanceId).join();
+        Integer httpRespCode = result.getSdkHttpMetadata().getHttpStatusCode();
+        getSimpleEmbedMessage(String.format("%s request completed with response [%s]", command, httpRespCode)
+                , statusCodeColorMap.getOrDefault(httpRespCode, Color.orange)).send(messageCreateEvent.getChannel());
     }
-
 }

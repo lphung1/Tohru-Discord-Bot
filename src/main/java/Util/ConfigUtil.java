@@ -1,6 +1,5 @@
 package Util;
 
-import AwsServices.AwsEc2Service;
 import com.amazonaws.auth.BasicAWSCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.logging.Level;
 
 public class ConfigUtil {
     static Properties prop = new Properties();
@@ -55,8 +53,6 @@ public class ConfigUtil {
 
     public static String getEC2InstanceId() { return prop.getProperty("aws.ec2InstanceId"); }
 
-    public static String getAwsDiscordRole() { return prop.getProperty("discord.awsRole"); }
-
     public static BasicAWSCredentials getBasicAwsCredentials() {
         return new BasicAWSCredentials(getAwsAccessKey(),getAwsSecretKey());
     }
@@ -75,9 +71,18 @@ public class ConfigUtil {
             return updateConfigFile();
     }
 
-    public static boolean setAwsRoleId(String roleId) {
-            prop.setProperty("discord.awsRole", roleId);
-            return updateConfigFile();
+    public static boolean setAwsRoleId(String serverId, String roleId) {
+        prop.setProperty( "discord.awsRole." + serverId, roleId);
+        return updateConfigFile();
+    }
+
+    /**
+     * returns role for a given serverId.
+     * @param serverId
+     * @return
+     */
+    public static String getAwsDiscordRole(String serverId) {
+        return prop.getProperty(String.format("discord.awsRole.%s", serverId));
     }
 
     public static boolean setAwsRegion(String roleId) {

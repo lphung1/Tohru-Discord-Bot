@@ -1,4 +1,4 @@
-package AwsServices;
+package Services.AwsServices;
 
 import Util.ConfigUtil;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

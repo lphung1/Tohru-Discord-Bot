@@ -9,7 +9,6 @@ import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceTypeInfo;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -28,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TimeZone;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -41,10 +39,6 @@ import static Util.ConfigUtil.getEC2InstanceId;
 public class DetailsCommand<T extends Instance> extends AwsCommand {
 
     private static Logger log = Logger.getLogger(DetailsCommand.class.getName());
-
-    public DetailsCommand(DiscordApi api) {
-        super(api, "details");
-    }
 
     public DetailsCommand(DiscordApi api, String command) {
         super(api, command);

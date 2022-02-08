@@ -15,10 +15,6 @@ public class SetInstanceIdCommand extends AwsCommand {
 
     static Logger log = Logger.getLogger(SetInstanceIdCommand.class.getName());
 
-    public SetInstanceIdCommand(DiscordApi api) {
-        super(api, "setInstanceId");
-    }
-
     public SetInstanceIdCommand(DiscordApi api, String command) {
         super(api, command);
         this.description = CommandDescriptions.track;

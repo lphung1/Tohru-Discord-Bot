@@ -1,9 +1,9 @@
 package Listeners;
 
 public interface CommandDescriptions {
-    String start = "Starts the instance that's currently being tracked. \nCan also pass a parameter to start a specific instance by using the instance id or alias \nEx. @mention start <instanceId/name>";
-    String stop = "Stops the tracked instance. Can pass parameter to stop a specific instance by id or alias. Ex. @mention stop <instanceId/name>";
-    String reboot = "Reboots tracked instance";
+    String start = "Starts the instance that's currently being tracked. \nCan also pass a parameter to start a specific instance by using the instance id or alias and or time in mins \nEx. @mention start <instanceId/name> <delayInMins>";
+    String stop = "Stops the tracked instance. Can pass parameter to stop a specific instance by id or alias and or time in mins. Ex. @mention stop <instanceId/name> <delayInMins>";
+    String reboot = "Reboots tracked instance Ex. @mention reboot <instanceId> <delayInMins>";
     String track = "Sets instanceId to track. Updates status based on tracked instance and will be default server for the other commands.\nadd <instanceId> argument to set the instanceID to track.";
     String details = "Shows details for current tracked instance. \nadd <all> parameter to view all available instances for current set region.";
     String serverIp = "Sends user the ip details for the tracked instance";

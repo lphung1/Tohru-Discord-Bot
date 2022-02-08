@@ -9,10 +9,6 @@ import org.javacord.api.event.message.MessageCreateEvent;
 
 public class GetAwsRegion extends AwsCommand {
 
-    public GetAwsRegion(DiscordApi api) {
-        super(api, "getRegion");
-    }
-
     public GetAwsRegion(DiscordApi api, String command) {
         super(api, command);
         this.description = CommandDescriptions.getRegion;

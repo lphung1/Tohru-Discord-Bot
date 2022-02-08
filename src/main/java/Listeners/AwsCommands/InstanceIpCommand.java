@@ -16,10 +16,6 @@ import static Util.MessageUtil.*;
 
 public class InstanceIpCommand extends AwsCommand {
 
-    public InstanceIpCommand(DiscordApi api) {
-        super(api, "serverIp");
-    }
-
     public InstanceIpCommand(DiscordApi api, String command) {
         super(api, command);
         this.description = CommandDescriptions.serverIp;
@@ -41,6 +37,5 @@ public class InstanceIpCommand extends AwsCommand {
         } else {
             getInvalidInstanceMessage().send(messageCreateEvent.getChannel());
         }
-
     }
 }
