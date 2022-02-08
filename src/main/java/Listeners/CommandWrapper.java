@@ -96,10 +96,19 @@ public abstract class CommandWrapper implements MessageCreateListener {
         return (hasArgument()) ? secondLastArg : null;
     }
 
+    /**
+     * Has at least 1 argument in command separated with space
+     * @return
+     */
     protected boolean hasArgument() {
         return hasArgument(1);
     }
 
+    /**
+     * Checks if command has at least n number of arguments
+     * @param numArguments
+     * @return
+     */
     protected boolean hasArgument(int numArguments) {
         int argSize = argumentList.size();
         if (argSize > numArguments) {

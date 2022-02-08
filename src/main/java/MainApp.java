@@ -1,4 +1,4 @@
-import AwsServices.AwsEc2Service;
+import Services.AwsServices.AwsEc2Service;
 import Listeners.AwsCommands.DetailsCommand;
 import Listeners.AwsCommands.GetAwsRegion;
 import Listeners.AwsCommands.InstanceIpCommand;
@@ -12,6 +12,7 @@ import Listeners.OwnerCommands.SetAwsRoleId;
 import Listeners.AwsCommands.SetInstanceIdCommand;
 import Listeners.AwsCommands.StartServerCommand;
 import Listeners.AwsCommands.StopServerCommand;
+import Services.ExecutorProvider;
 import Util.ConfigUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -51,7 +51,7 @@ public class MainApp {
 
         listenerList.forEach(listener -> api.addMessageCreateListener(listener));
         Runnable setStatus = () -> ec2Service.updateBotStatus(api);
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduler = ExecutorProvider.getSingleScheduledExecutor();
 
         scheduler.scheduleAtFixedRate(setStatus, 0, 3, TimeUnit.MINUTES );
 

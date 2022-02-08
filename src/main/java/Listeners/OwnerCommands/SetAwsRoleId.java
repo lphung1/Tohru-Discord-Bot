@@ -14,10 +14,6 @@ import static Util.MessageUtil.*;
 
 public class SetAwsRoleId extends OwnerCommand {
 
-    public SetAwsRoleId(DiscordApi api) {
-        super(api, "setAwsRole");
-    }
-
     public SetAwsRoleId(DiscordApi api, String command) {
         super(api, command);
         this.description = CommandDescriptions.setAwsRole;
@@ -26,21 +22,27 @@ public class SetAwsRoleId extends OwnerCommand {
     @Override
     public void doOwnerCommand(MessageCreateEvent messageCreateEvent) {
         TextChannel channel = messageCreateEvent.getChannel();
-        if (hasArgument()) {
-            if (isValidRole(messageCreateEvent, getLastArgument())) {
-                ConfigUtil.setAwsRoleId(getLastArgument());
-                getSimpleEmbedMessage("New aws role has been set", Color.BLUE)
-                        .send(channel);
-            }
-            else {
-                getSimpleErrorMessage("That's not a valid role Id for this server")
-                        .send(channel);
-            }
-        }
-        else {
+        if (!hasArgument()) {
             getSimpleEmbedMessage("No arguments found, please enter a roleId", Color.RED)
                     .send(channel);
+            return;
         }
+
+        if (!messageCreateEvent.getServer().isPresent()) {
+            getSimpleErrorMessage("You cannot use that command here, there are no roles here to set.").send(messageCreateEvent.getChannel());
+            return;
+        }
+
+        if (isValidRole(messageCreateEvent, getLastArgument())) {
+            ConfigUtil.setAwsRoleId(messageCreateEvent.getServer().get().getIdAsString(), getLastArgument());
+            getSimpleEmbedMessage("New aws role has been set", Color.BLUE)
+                    .send(channel);
+        }
+        else {
+            getSimpleErrorMessage("That's not a valid role Id for this server")
+                    .send(channel);
+        }
+
     }
 
     private boolean isValidRole(MessageCreateEvent messageCreateEvent, String input) {

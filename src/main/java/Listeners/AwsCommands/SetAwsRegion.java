@@ -17,10 +17,6 @@ import static Util.MessageUtil.getSimpleErrorMessage;
 
 public class SetAwsRegion extends AwsCommand {
 
-    public SetAwsRegion(DiscordApi api) {
-        super(api, "setRegion");
-    }
-
     public SetAwsRegion(DiscordApi api, String command) {
         super(api, command);
         this.description = CommandDescriptions.setRegion;

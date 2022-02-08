@@ -1,14 +1,12 @@
-package AwsServices;
+package Services.AwsServices;
 
 import Util.ConfigUtil;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.costexplorer.AWSCostExplorer;
 import com.amazonaws.services.costexplorer.AWSCostExplorerClientBuilder;
 import com.amazonaws.services.costexplorer.model.DateInterval;
-import com.amazonaws.services.costexplorer.model.Expression;
 import com.amazonaws.services.costexplorer.model.GetCostAndUsageRequest;
 import com.amazonaws.services.costexplorer.model.GetCostAndUsageResult;
-import com.amazonaws.services.costexplorer.model.Group;
 import com.amazonaws.services.costexplorer.model.GroupDefinition;
 import com.amazonaws.services.costexplorer.model.GroupDefinitionType;
 import org.slf4j.Logger;

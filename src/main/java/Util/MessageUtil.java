@@ -94,4 +94,8 @@ public class MessageUtil {
         return getOrDefault(string, "-");
     }
 
+    public static boolean isDigit(String string) {
+        return string.matches("[0-9]+");
+    }
+
 }
