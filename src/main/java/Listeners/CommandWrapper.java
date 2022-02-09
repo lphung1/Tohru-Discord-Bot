@@ -1,5 +1,6 @@
 package Listeners;
 import Util.ConfigUtil;
+import Util.MessageUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -34,17 +35,17 @@ public abstract class CommandWrapper implements MessageCreateListener {
         prefix = (prefixConfig == null || prefixConfig.equalsIgnoreCase("@mention")) ? "" : prefixConfig;
     }
 
-    protected Function<MessageCreateEvent, Boolean> botInvoked = (messageCreateEvent -> {
+    protected boolean botInvoked(MessageCreateEvent messageCreateEvent) {
         if (prefix.equals("")) {
             return (messageCreateEvent.getMessage().getMentionedUsers().contains(api.getYourself()));
         }
         return (messageCreateEvent.getMessageContent().startsWith(prefix));
-    });
+    }
 
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
         try {
-            if (botInvoked.apply(messageCreateEvent) && messageCreateEvent.getMessageContent().contains(command)) {
+            if (botInvoked(messageCreateEvent) && messageCreateEvent.getMessageContent().contains(command)) {
                 argumentList = getMessageArgList(messageCreateEvent);
                 try (NonThrowingAutoCloseable typingIndicator = messageCreateEvent.getChannel().typeContinuously(e -> log.error(e.toString()))) {
                     doAction(messageCreateEvent);
@@ -53,17 +54,7 @@ public abstract class CommandWrapper implements MessageCreateListener {
             }
         }
         catch (Exception e) {
-            StringBuilder sb = new StringBuilder().append(e+"\n");
-
-            Arrays.stream(e.getStackTrace())
-                    .map(StackTraceElement::toString)
-                    .forEach(stack -> sb.append(stack+"\n\t"));
-            sb.setLength(1500);
-
-            new MessageBuilder()
-                    .append(String.format("Something went wrong") , MessageDecoration.BOLD)
-                    .appendCode("java", sb.toString())
-                    .send(messageCreateEvent.getChannel());
+            MessageUtil.printStackTrace(messageCreateEvent, e);
         }
     }
 

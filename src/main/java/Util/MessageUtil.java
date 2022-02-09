@@ -1,13 +1,17 @@
 package Util;
 
 import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.MessageDecoration;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static Util.ConfigUtil.getAwsRegion;
+import static Util.ConfigUtil.isDebug;
 import static Util.ConfigUtil.getEC2InstanceId;
 
 public class MessageUtil {
@@ -96,6 +100,22 @@ public class MessageUtil {
 
     public static boolean isDigit(String string) {
         return string.matches("[0-9]+");
+    }
+
+    public static void printStackTrace(MessageCreateEvent messageCreateEvent, Exception e) {
+        // don't print stack trace if debug mode is false
+        if (isDebug()) {
+            StringBuilder sb = new StringBuilder().append(e + "\n");
+            Arrays.stream(e.getStackTrace())
+                    .map(StackTraceElement::toString)
+                    .forEach(stack -> sb.append(stack + "\n\t"));
+            sb.setLength(1500);
+
+            new MessageBuilder()
+                    .append(String.format("Something went wrong"), MessageDecoration.BOLD)
+                    .appendCode("java", sb.toString())
+                    .send(messageCreateEvent.getChannel());
+        }
     }
 
 }

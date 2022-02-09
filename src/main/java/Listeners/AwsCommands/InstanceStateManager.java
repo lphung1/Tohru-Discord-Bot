@@ -2,11 +2,13 @@ package Listeners.AwsCommands;
 
 import Listeners.AwsCommand;
 import Services.ExecutorProvider;
+import Util.CallOrPrint;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static Util.ConfigUtil.getEC2InstanceId;
@@ -14,7 +16,7 @@ import static Util.MessageUtil.getInvalidInstanceMessage;
 import static Util.MessageUtil.getSimpleEmbedMessage;
 import static Util.MessageUtil.isDigit;
 
-public abstract class InstanceStateManager extends AwsCommand {
+public abstract class InstanceStateManager<T> extends AwsCommand {
 
     public InstanceStateManager(DiscordApi api, String command) {
         super(api, command);
@@ -25,7 +27,7 @@ public abstract class InstanceStateManager extends AwsCommand {
      * @param messageCreateEvent
      * @param instanceId
      */
-    public abstract void changeInstanceState(MessageCreateEvent messageCreateEvent, String instanceId);
+    public abstract T changeInstanceState(MessageCreateEvent messageCreateEvent, String instanceId);
 
     @Override
     public void doAwsAction(MessageCreateEvent messageCreateEvent) {
@@ -36,19 +38,23 @@ public abstract class InstanceStateManager extends AwsCommand {
         }
         else if(hasArgument(2) && isDigit(getLastArgument()) && isValidInstance(getSecondLastArgument())){
             // <instanceId> <delayInMinutes>
-            Runnable runnable = () -> changeInstanceState(messageCreateEvent, getSecondLastArgument());
+            String instanceId = getSecondLastArgument();
+            Callable callable = () -> changeInstanceState(messageCreateEvent, instanceId);
+            CallOrPrint<T> callOrPrint = new CallOrPrint(callable, messageCreateEvent);
             sendScheduledMessage(getLastArgument(), channel);
-            ExecutorProvider.getSingleScheduledExecutor().schedule( runnable, Integer.parseInt(getLastArgument()), TimeUnit.MINUTES);
+            ExecutorProvider.getSingleScheduledExecutor().schedule( callOrPrint, Integer.parseInt(getLastArgument()), TimeUnit.MINUTES);
         }
         else if (hasArgument()) { // Has either delay or id in command
             // <delayInMinutes>
             if (isDigit(getLastArgument())) {
                 sendScheduledMessage(getLastArgument(), channel);
-                Runnable runnable = () -> changeInstanceState(messageCreateEvent, getEC2InstanceId());
-                ExecutorProvider.getSingleScheduledExecutor().schedule(runnable, Integer.parseInt(getLastArgument()), TimeUnit.MINUTES);
+                Callable callable = () -> changeInstanceState(messageCreateEvent, getEC2InstanceId());
+                CallOrPrint<T> callOrPrint = new CallOrPrint(callable, messageCreateEvent);
+                ExecutorProvider.getSingleScheduledExecutor().schedule(callOrPrint, Integer.parseInt(getLastArgument()), TimeUnit.MINUTES);
             } // <instanceId>
             else if (isValidInstance(getLastArgument())) {
-                changeInstanceState(messageCreateEvent, getLastArgument());
+                String instanceId = getLastArgument();
+                changeInstanceState(messageCreateEvent, instanceId);
             }
         }
         else {

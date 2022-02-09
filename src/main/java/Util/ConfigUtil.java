@@ -57,6 +57,31 @@ public class ConfigUtil {
         return new BasicAWSCredentials(getAwsAccessKey(),getAwsSecretKey());
     }
 
+    public static boolean isDebug() {
+        String debug = prop.getProperty("discord.debug");
+        if (debug == null || debug.isEmpty() || debug.equals("false")) {
+            return false;
+        }
+        return debug.equals("true");
+    }
+
+    public static boolean setDebug() {
+        String debug = prop.getProperty("discord.debug");
+        if (debug == null || debug.isEmpty() || debug.equals("false")) {
+            prop.setProperty("discord.debug", "true");
+            return updateConfigFile();
+        }
+        if (debug.equals("true")) {
+            prop.setProperty("discord.debug", "false");
+            return updateConfigFile();
+        }
+        throw new IllegalStateException("Could not set debug mode");
+    }
+
+    public static String getCheckmarkEmoji() {
+        return prop.getProperty("discord.checkmarkEmoji");
+    }
+
     public static String getLambdaFunction(int num) {
         return prop.getProperty("aws.lambda."+num);
     }
