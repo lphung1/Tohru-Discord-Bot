@@ -1,5 +1,6 @@
 package Listeners;
 
+import Services.AwsServices.AwsCloudWatchService;
 import Services.AwsServices.AwsCostExplorerService;
 import Services.AwsServices.AwsEc2Service;
 import Services.AwsServices.AwsLambdaService;
@@ -15,18 +16,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Util.MessageUtil.*;
+import static Util.ConfigUtil.*;
 
 public abstract class AwsCommand extends CommandWrapper {
 
     protected static AwsLambdaService awsLambdaService;
     protected static AwsEc2Service awsEc2Service;
     protected static AwsCostExplorerService costExplorerService;
+    protected static AwsCloudWatchService awsCloudWatchService;
 
     public AwsCommand(DiscordApi api, String command) {
         super(api, command);
         awsLambdaService = AwsLambdaService.getService();
         awsEc2Service = AwsEc2Service.getService();
         costExplorerService = AwsCostExplorerService.getService();
+        awsCloudWatchService = AwsCloudWatchService.getService();
     }
 
     @Override
@@ -41,7 +45,7 @@ public abstract class AwsCommand extends CommandWrapper {
             server = messageCreateEvent.getServer().get();
             rolesForInvokedServer = thisUser.getRoles(server);
             String serverId = server.getIdAsString();
-            awsRole = api.getRoleById(ConfigUtil.getAwsDiscordRole(serverId)).get();
+            awsRole = (api.getRoleById(getAwsDiscordRole(serverId)).isPresent()) ? api.getRoleById(getAwsDiscordRole(serverId)).get() : null;
         } else {
             rolesForInvokedServer = new ArrayList<>();
             awsRole = null;

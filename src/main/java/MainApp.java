@@ -1,3 +1,4 @@
+import Listeners.OwnerCommands.SetDebug;
 import Services.AwsServices.AwsEc2Service;
 import Listeners.AwsCommands.DetailsCommand;
 import Listeners.AwsCommands.GetAwsRegion;
@@ -46,6 +47,7 @@ public class MainApp {
         listenerList.add(new SetAwsRegion(api, "setRegion"));
         listenerList.add(new GetAwsRegion(api, "region"));
         listenerList.add(new BillingCommand(api, "bill"));
+        listenerList.add(new SetDebug(api, "debug"));
         listenerList.add(new HelpCommand(api, "help", listenerList));
         listenerList.add(new SetInstanceAlias(api, "alias"));
 

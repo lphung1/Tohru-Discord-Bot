@@ -29,6 +29,7 @@ public class SetAwsRegion extends AwsCommand {
             if (ConfigUtil.setAwsRegion(getLastArgument())) {
                 awsEc2Service.updateService();
                 costExplorerService.updateService();
+                awsCloudWatchService.updateService();
                 getSimpleEmbedMessage(String.format("Updated Region : %s", getLastArgument()))
                         .send(channel);
             } else {

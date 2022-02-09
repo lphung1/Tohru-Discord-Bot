@@ -31,7 +31,7 @@ public class HelpCommand extends CommandWrapper {
         StringBuilder sb = new StringBuilder();
         allCommands.forEach(command -> sb.append(String.format("%s**%s** \n %s\n\n", prefix2 , command.getCommandName(), getOrDefault(command.getCommandDescription()) ) ));
         User user = messageCreateEvent.getMessageAuthor().asUser().get();
-        String checkEmoji = "✅";
+        String checkEmoji = ConfigUtil.getCheckmarkEmoji();
         new MessageBuilder()
                 .addEmbed(embedBuilder
                         .setTitle("Available Commands")
