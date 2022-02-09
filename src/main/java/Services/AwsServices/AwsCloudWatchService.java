@@ -1,12 +1,17 @@
 package Services.AwsServices;
 
 import Util.ConfigUtil;
+import Util.MessageUtil;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.GetMetricStatisticsRequest;
 import com.amazonaws.services.cloudwatch.model.GetMetricStatisticsResult;
+import com.amazonaws.services.cloudwatch.model.GetMetricWidgetImageRequest;
+import com.amazonaws.services.cloudwatch.model.GetMetricWidgetImageResult;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +33,6 @@ public class AwsCloudWatchService {
         log.info("Initializing aws cost explorer");
         amazonCloudWatch = buildCloudWatchClient();
         log.info("Initialized");
-        getMetricStatistics(getMetricStatisticsRequest());
     }
 
     private AmazonCloudWatch buildCloudWatchClient() {
@@ -49,8 +53,43 @@ public class AwsCloudWatchService {
         return amazonCloudWatch.getMetricStatistics(request);
     }
 
-    public GetMetricStatisticsRequest getMetricStatisticsRequest() {
+    private GetMetricStatisticsRequest getMetricStatisticsRequest() {
         return getMetricStatisticsRequest(1, getEC2InstanceId());
+    }
+
+    public GetMetricWidgetImageResult getMetricStatisticsResult(int hoursAgo) {
+        return amazonCloudWatch.getMetricWidgetImage(getMetricWidgetImageRequest(hoursAgo));
+    }
+
+    public GetMetricWidgetImageRequest getMetricWidgetImageRequest(int hoursAgo) {
+
+        String hoursAgoStr = (hoursAgo < 0) ? "-PT1H" : String.format("-PT%dH", hoursAgo);
+        JSONObject root = new JSONObject();
+        root.put("width", 800);
+        root.put("height", 395);
+
+        JSONObject averageStat = new JSONObject().put("stat", "Average");
+        JSONObject maxStat = new JSONObject().put("stat", "Maximum");
+        JSONArray metrics = new JSONArray();
+        JSONArray metric = new JSONArray();
+
+        metric.put("AWS/EC2");
+        metric.put("CPUUtilization");
+        metric.put("InstanceId");
+        metric.put(ConfigUtil.getEC2InstanceId());
+        metric.put(averageStat);
+
+        metrics.put(metric);
+
+        root.put("metrics", metrics);
+
+        root.put("period", 60);
+        root.put("start", hoursAgoStr);
+        root.put("end", "-PT0H");
+        root.put("title", String.format("Average cpu usage for instance %s", ConfigUtil.getEC2InstanceId() ));
+        root.put("view", "timeSeries");
+
+        return new GetMetricWidgetImageRequest().withMetricWidget(root.toString());
     }
 
     public GetMetricStatisticsRequest getMetricStatisticsRequest(int hourRangeFromNow) {
