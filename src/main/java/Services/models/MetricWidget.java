@@ -10,7 +10,7 @@ public class MetricWidget implements Serializable {
     int width;
     int height;
 
-    String metricss;
+    String metricsss;
     /**
      *       "metrics":[
      *          [
