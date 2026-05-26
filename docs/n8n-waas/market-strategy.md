@@ -241,6 +241,99 @@ Law Firms and Healthcare: harder to sell, high value — quality play, needs com
 
 ---
 
+## Beta Program
+
+### Purpose
+
+Validate delivery process and workflow templates before charging full price.
+Not a discount strategy — a product testing strategy. You are buying feedback,
+not selling value. Economics are different: your time is R&D, not service delivery.
+
+### Structure
+
+```
+Price:      $50 flat for the beta period
+Duration:   30-45 days fixed (not ongoing)
+Spots:      3-5 max — scarcity is real, not manufactured
+Exit:       Clear upgrade path communicated upfront
+```
+
+### What Clients Get
+
+- 1-2 pre-selected workflows deployed to their business
+- Email support during beta period
+- Your attention — you are actively monitoring and fixing things
+
+### What You Get (put in writing at signup)
+
+- 2 feedback calls (week 2 and end of beta)
+- Written answers to 5 specific questions after beta ends
+- Permission to quote them and use their business name if it worked
+- First right of refusal on full-price tier after beta
+
+### Beta Workflows by Vertical
+
+Only test the workflows you plan to productize. Keep scope narrow.
+
+**HVAC Beta (pick 1-2):**
+- Missed call → SMS notification to owner
+- Post-service review request via SMS
+- Appointment confirmation + 24hr reminder
+
+**Restaurant Beta (pick 1-2):**
+- Catering inquiry → instant auto-response with menu/pricing
+- Post-visit review request (SMS or email)
+- Reservation confirmation + reminder
+
+Do not beta test AI call answering or website chat agents — too variable in cost
+and complexity to validate at $50. Those go straight to founding client pricing.
+
+### What to Measure During Beta
+
+| Question | How to Track |
+|---|---|
+| Actual setup time per client | Log hours from intake form to live |
+| Support questions received | Note every inbound question verbatim |
+| What breaks and when | Incident log with time to fix |
+| Client awareness of automation working | Ask directly on week 2 call |
+| Willingness to pay full price | Ask directly on final call |
+
+After 3 beta clients you will know:
+- True time cost to deliver each workflow
+- What to put in an FAQ to reduce support load
+- What to add to onboarding to prevent the most common issues
+- Whether the workflow actually delivers visible value to the client
+
+### Beta → Founding Client Conversion
+
+```
+Beta ($50, 30-45 days)
+    ↓
+Feedback call — did it work?
+    ↓ Yes                        ↓ No
+Convert to founding rate         Thank them, do not convert
+($197-297/mo)                    Fix the workflow, find next beta client
+Get testimonial
+Get case study
+```
+
+If they won't convert to founding rate after a working beta, the workflow
+does not deliver enough visible value to sell. That is a product problem,
+not a sales problem — fix the workflow before the next beta client.
+
+### Beta Program Timeline
+
+```
+Week 1:    Intake form + setup (target: under 2hrs per client)
+Week 2:    First feedback call (15min) — what do they notice?
+Week 3-4:  Monitor, fix anything that breaks, note all support questions
+Week 5-6:  Final feedback call (30min) — full debrief
+           Present upgrade offer on this call, not after
+End:       Document learnings, update workflow template, move to next client
+```
+
+---
+
 ## Client Acquisition by Phase
 
 ### Phase 1 (HVAC + Restaurants)
