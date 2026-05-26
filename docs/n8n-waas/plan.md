@@ -4,6 +4,39 @@
 Hybrid architecture: Hostinger compute + AWS managed data layer.
 Execute phases in order. Each phase is independently completable.
 
+Phase 5 (migration) and compliance activation are a single event —
+not two separate steps. When compute moves to AWS, compliance controls
+go live at the same time. This unlocks regulated market clients
+(law firms, healthcare) using case studies built in Phases 1-4.
+
+---
+
+## Unified Growth Timeline
+
+```
+Month 1-2    Beta program (5 clients, $50)
+             Validate workflows and delivery process
+
+Month 2-6    Founding clients (HVAC + restaurants)
+             Build case studies, prove service reliability
+
+Month 6-9    Hit $5-8k/mo ARR
+             Migration trigger reached
+
+Month 8-10   Phase 5: Migrate to AWS + enable compliance simultaneously
+             SOC 2 observation period starts
+             AWS BAA signed (HIPAA-eligible)
+
+Month 10-14  Approach law firms and healthcare
+             Pitch: proven service + case studies + SOC 2 in progress
+
+Month 16-18  SOC 2 Type II report issued
+             Close compliance tier clients at $2,500-3,500/mo
+
+Month 18+    $100k ARR target reachable
+             Regulated clients anchor recurring revenue
+```
+
 ---
 
 ## Variables (set before executing any phase)
@@ -93,10 +126,16 @@ Tasks:
 
 ---
 
-## Phase 5 — Migrate Compute to AWS (future)
+## Phase 5 — Migrate Compute + Activate Compliance (single event)
 
-**Trigger:** Monthly Hostinger ops burden > 2hrs OR client count > 20.
+**Trigger:** Monthly revenue $5-8k ARR OR ops burden > 2hrs/mo OR first
+regulated client inquiry received — whichever comes first.
 
+**This phase does two things simultaneously:**
+- Moves compute from Hostinger to ECS Fargate (reliability)
+- Enables compliance controls (regulated market access)
+
+### Part A — Compute Migration
 Tasks:
 1. Create ECS Fargate cluster
 2. Create task definitions for n8n-main and n8n-worker (same Docker image, same env vars — RDS/S3 endpoints unchanged)
@@ -107,13 +146,35 @@ Tasks:
 7. Verify traffic flowing through new stack
 8. Cancel Hostinger VPS
 
-**Done when:** CloudFront origin is ALB. Hostinger cancelled.
+### Part B — Compliance Activation (same deployment window)
+Tasks:
+1. Enable RDS storage encryption (KMS) — if not already enabled from Phase 1
+2. Enable RDS CloudWatch logs: postgresql, upgrade
+3. Enable CloudTrail (all regions, log to dedicated S3 audit bucket)
+4. Enable GuardDuty on AWS account
+5. Enable AWS Config with rules: rds-storage-encrypted, s3-bucket-ssl-requests-only, mfa-enabled-for-console-access
+6. Move all secrets from env vars to AWS Secrets Manager
+7. Enable S3 access logging on both buckets (log to audit bucket)
+8. Sign AWS BAA (Business Associate Agreement) — AWS console → Artifact → Agreements
+9. Document SOC 2 observation period start date
+
+### Part C — Market Unlock (immediately after Part B)
+Tasks:
+1. Update case study template to include infrastructure compliance notes
+2. Add "SOC 2 in progress" to service description
+3. Begin outreach to law firms and healthcare practices
+4. Use HVAC/restaurant case studies as proof of delivery reliability
+
+**Done when:** CloudFront origin is ALB, CloudTrail active, AWS BAA signed,
+SOC 2 observation date recorded.
 
 ---
 
 ## Decision Checklist Before Phase 5
 
-- [ ] Revenue covers ~$100/mo AWS managed cost
-- [ ] Any single client requires SLA guarantees
+- [ ] Monthly revenue at $5-8k ARR
+- [ ] 3+ case studies documented (HVAC or restaurant)
 - [ ] Ops time on Hostinger exceeds 2hrs/mo consistently
-- [ ] Client count exceeds 20
+- [ ] OR first regulated client inquiry received
+- [ ] RDS encryption enabled (should be from Phase 1)
+- [ ] MFA enabled on AWS root and IAM admin accounts

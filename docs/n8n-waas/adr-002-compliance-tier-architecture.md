@@ -6,16 +6,34 @@
 
 ---
 
+## Activation Timing
+
+Compliance controls defined in this ADR are activated **during Phase 5 migration**
+(ADR-001) — not as a separate project. When compute moves from Hostinger to ECS
+Fargate, compliance is enabled in the same deployment window.
+
+This sequencing is intentional:
+- Phase 1 (Hostinger) builds case studies and proves service delivery
+- Phase 5 migration + compliance activation unlocks regulated markets
+- Case studies from HVAC/restaurant clients prove operational reliability to law firms
+  and healthcare practices before SOC 2 report is issued
+
+"SOC 2 in progress" combined with proven case studies is sufficient to open
+regulated client conversations. The report closes deals with conservative procurement.
+
+---
+
 ## Context
 
-ADR-001 established a hybrid Hostinger + AWS architecture optimized for cost at small scale. That architecture is not suitable for clients in regulated industries (law firms, healthcare, financial services) due to:
+ADR-001 established a hybrid Hostinger + AWS architecture optimized for cost at small scale. That architecture is not suitable for clients in regulated industries (law firms, healthcare) due to:
 
 - RDS publicly accessible
 - Compute on Hostinger (no SOC 2, no encryption guarantee, EU data residency risk)
 - No audit logging
 - No vendor BAA available from Hostinger
 
-A second tier is required for regulated clients that provides full AWS isolation, audit trails, and a path to SOC 2 Type II certification.
+Compliance controls are enabled when compute migrates to AWS — one event that
+simultaneously improves reliability and unlocks regulated market access.
 
 ---
 

@@ -91,27 +91,62 @@ Move compute from Hostinger to ECS Fargate when **any** of the following are tru
 
 | Trigger | Threshold |
 |---|---|
+| Monthly ARR | $5-8k/mo |
+| Case studies ready | 3+ documented |
 | Monthly ops burden | > 2 hrs/mo |
-| Active client count | > 20 |
+| First regulated client inquiry | Any law firm or healthcare lead |
 | Single client SLA requirement | Any uptime guarantee |
-| Worker scaling events | > 2x per month |
-| Revenue | Covers ~$100/mo AWS managed cost |
 
 ---
 
-## Migration Path (Phase 5)
+## Migration Path (Phase 5) — Compute + Compliance as Single Event
 
+Migration and compliance activation happen in the same deployment window.
+Moving to AWS compute is what makes compliance controls practical to enable.
+Phase 1 case studies prove delivery reliability to regulated clients.
+
+**Compute migration:**
 1. Provision ECS Fargate cluster + task definitions (same Docker image)
 2. Provision ElastiCache Redis — update `QUEUE_BULL_REDIS_HOST`
 3. Create ALB, wire ECS tasks as targets
 4. Update CloudFront origin: Hostinger IP → ALB DNS
 5. Verify traffic, cancel Hostinger VPS
 
-RDS endpoint, S3 bucket, and IAM credentials remain unchanged throughout.
+**Compliance activation (same window):**
+1. Enable RDS KMS encryption and CloudWatch logs
+2. Enable CloudTrail (all regions, dedicated audit bucket)
+3. Enable GuardDuty and AWS Config compliance rules
+4. Migrate secrets from env vars to Secrets Manager
+5. Enable S3 access logging
+6. Sign AWS BAA (console → Artifact → Agreements)
+7. Record SOC 2 observation period start date
+
+**Market unlock (immediately after):**
+- Infrastructure is now compliance-eligible
+- Case studies from Phase 1 prove delivery reliability
+- "SOC 2 in progress" is active and sellable to regulated clients
+- Approach law firms and healthcare practices
+
+RDS endpoint, S3 bucket, and CloudFront domain unchanged throughout.
+DNS cutover downtime under 5 minutes.
+
+---
+
+## Infrastructure Cost at Migration
+
+```
+Pre-migration (Hostinger hybrid):    ~$47/mo at 17 clients
+Post-migration (AWS managed):        ~$112/mo
+Post-migration (compliance-enabled): ~$145-160/mo
+
+Delta at $8,333/mo revenue:          ~$100/mo = 1.2% of revenue
+```
 
 ---
 
 ## Related Documents
 
-- `plan.md` — phased execution plan
+- `plan.md` — phased execution plan with unified growth timeline
 - `runbook.md` — step-by-step operational setup
+- `adr-002-compliance-tier-architecture.md` — compliance controls detail
+- `market-strategy.md` — Phase 1 markets and expansion roadmap
