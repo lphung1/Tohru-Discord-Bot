@@ -135,6 +135,22 @@ Note: One-time projects do not include ongoing support. Offer a support retainer
 
 ## Market-Specific Pricing Notes
 
+### HVAC Companies
+- Lead with AI call answering — fastest visible ROI
+- Owner-operated, fast decisions, cash-rich during peak season
+- Founding package: $297/mo (call answering + reminders + review requests)
+- Standard: $597/mo
+- Upsell: dispatch notifications, maintenance contract renewal sequences
+- Approach just before peak season (April-May, September-October)
+
+### Restaurants
+- Budget-sensitive — Starter tier only unless multi-location
+- Lead with catering automation + review requests
+- Founding package: $197/mo
+- Standard: $397/mo
+- Multi-location upsell: Growth tier per location or flat rate for chain
+- Avoid over-automating — must feel personal to guests
+
 ### Law Firms
 - Premium due to compliance requirements and risk sensitivity
 - Minimum: Growth tier ($997) — compliance tier pushes to Enterprise
